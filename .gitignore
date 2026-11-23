@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.local
+
+# Always keep these tracked
+!.kiro/
+!powers/

@@ -1,0 +1,19 @@
+{
+  "name": "covenant",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Neuro-symbolic Contradiction & Loophole Exorcist skeleton (Kiroween 2026, Skeleton Crew)",
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.0",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "pnpm -r --parallel --if-present dev",
+    "build": "pnpm -r --if-present build",
+    "test": "pnpm -r --if-present test",
+    "test:pbt": "pnpm --filter @covenant/core --if-present test:pbt",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,4 @@
+packages:
+  - "packages/covenant-core"
+  - "app-1-spec-inquisitor"
+  - "app-2-clause-exorcist"
