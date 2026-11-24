@@ -18,6 +18,16 @@ const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../.
 const temporaryDirectories: string[] = [];
 const nodeBuiltins = new Set(builtinModules.map((name) => name.replace(/^node:/u, "")));
 
+function applicationSource(directory: string): string {
+  const files: string[] = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const absolute = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(applicationSource(absolute));
+    else if (entry.isFile() && /\.[cm]?tsx?$/u.test(entry.name)) files.push(readFileSync(absolute, "utf8"));
+  }
+  return files.join("\n");
+}
+
 function nodeBuiltinReferences(source: string): readonly string[] {
   const references: string[] = [];
   const importPattern = /(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*|\brequire\s*\(\s*)["']([^"']+)["']/gu;
@@ -195,9 +205,10 @@ describe("the monorepo package boundary", () => {
     for (const application of ["app-1-spec-inquisitor", "app-2-clause-exorcist"]) {
       const applicationPackage = readJson(`${application}/package.json`);
       const dependencies = readRecord(applicationPackage.dependencies);
-      const source = readFileSync(join(repositoryRoot, application, "src/main.tsx"), "utf8");
+      const source = applicationSource(join(repositoryRoot, application, "src"));
       expect(dependencies["@covenant/core"]).toBe("workspace:*");
       expect(source).toMatch(/from ["']@covenant\/core["']/u);
+      expect(source).toMatch(/@covenant\/core\/tribunal\.css/u);
     }
 
     execFileSync(process.execPath, [

@@ -1,0 +1,509 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #f5e9cb;
+  background: #090c0e;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: #090c0e;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+button,
+a,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+.app-shell {
+  width: min(100%, 1600px);
+  min-height: 100vh;
+  margin-inline: auto;
+  padding: 20px clamp(16px, 2.5vw, 40px) 104px;
+  color: #f5e9cb;
+  font-family: Commissioner, ui-sans-serif, system-ui, sans-serif;
+}
+
+.app-shell .cov-inquisitor-bar,
+.app-shell .cov-chalice-panel__header,
+.app-shell .cov-certification-blocked {
+  background: #090c0e;
+}
+
+.app-shell .cov-source-pane {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 14px 16px 0 #321719, 0 18px 32px rgba(0, 0, 0, 0.35);
+}
+
+.app-shell .cov-source-gutter button {
+  color: #811525;
+  font-weight: 700;
+}
+
+.app-skip-link {
+  position: fixed;
+  z-index: 50;
+  top: 8px;
+  left: 8px;
+  padding: 12px 16px;
+  color: #090c0e;
+  background: #f5e9cb;
+  font-weight: 700;
+  transform: translateY(-140%);
+}
+
+.app-skip-link:focus {
+  transform: translateY(0);
+}
+
+.app-masthead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 20px;
+  min-height: 112px;
+  padding: 16px 0 22px;
+  border-bottom: 1px solid #74552e;
+}
+
+.app-wordmark {
+  display: grid;
+  grid-template-columns: 48px auto;
+  align-items: center;
+  gap: 10px;
+  color: #cdb37a;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+
+.app-wordmark > span {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid #a51f32;
+  border-radius: 50%;
+  color: #f5e9cb;
+  background: #321719;
+  box-shadow: 0 4px 0 rgba(72, 8, 18, 0.58);
+  font: 600 1.4rem/1 "Bodoni Moda", Didot, "Times New Roman", serif;
+}
+
+.app-masthead__copy {
+  max-width: 78ch;
+  padding-left: 20px;
+  border-left: 1px solid #321719;
+}
+
+.app-masthead h1,
+.app-document-heading h2,
+.app-scroll-selector h2,
+.app-export-bench h2,
+.app-evidence-ledger h2,
+.app-evidence-prompt h2,
+.app-loading h2 {
+  margin: 0;
+  color: #f5e9cb;
+  font-family: "Bodoni Moda", Didot, "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.app-masthead h1 {
+  font-size: clamp(2.2rem, 4.4vw, 4.6rem);
+  line-height: 0.94;
+}
+
+.app-masthead p,
+.app-document-heading p,
+.app-scroll-selector p,
+.app-export-bench p,
+.app-loading p,
+.app-evidence-prompt p {
+  max-width: 78ch;
+  margin: 8px 0 0;
+  color: #e9d6aa;
+  line-height: 1.55;
+}
+
+.app-offline-ledger {
+  display: grid;
+  gap: 2px;
+  min-width: 190px;
+  padding: 12px 14px;
+  border: 1px solid #a51f32;
+  border-radius: 3px;
+  color: #cdb37a;
+  background: #321719;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  font-family: "Fragment Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+}
+
+.app-offline-ledger strong {
+  color: #f5e9cb;
+  font-family: Commissioner, system-ui, sans-serif;
+  font-size: 0.78rem;
+}
+
+.app-scroll-selector {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 3fr);
+  gap: 28px;
+  align-items: center;
+  padding: 28px 0;
+}
+
+.app-scroll-selector h2,
+.app-export-bench h2,
+.app-evidence-ledger h2,
+.app-evidence-prompt h2,
+.app-loading h2 {
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  line-height: 1.05;
+}
+
+.app-scroll-selector__options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.app-scroll-selector__options button {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 112px;
+  padding: 16px;
+  border: 1px solid #74552e;
+  border-radius: 3px 14px 3px 3px;
+  color: #f5e9cb;
+  background: #321719;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-scroll-selector__options button:hover,
+.app-scroll-selector__options button[aria-pressed="true"] {
+  border-color: #a51f32;
+}
+
+.app-scroll-selector__options button[aria-pressed="true"] {
+  box-shadow: inset 0 -3px 0 #a51f32, 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.app-scroll-selector__options strong {
+  font-family: "Bodoni Moda", Didot, "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.app-scroll-selector__options span {
+  color: #e9d6aa;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.app-document-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 8px 0 18px;
+  border-top: 1px solid #321719;
+}
+
+.app-marginal-kicker {
+  margin: 0 0 6px;
+  color: #a51f32;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.app-document-heading h2 {
+  max-width: 28ch;
+  font-size: clamp(1.9rem, 3vw, 3.2rem);
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.app-verify-state {
+  display: grid;
+  gap: 8px;
+  min-width: min(100%, 280px);
+  padding: 12px 14px;
+  border: 1px solid #a51f32;
+  border-radius: 3px;
+  color: #f5e9cb;
+  background: #321719;
+  font: 0.75rem/1.35 "Fragment Mono", ui-monospace, monospace;
+}
+
+.app-wax-rule {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #a51f32;
+  transform-origin: left center;
+  animation: app-wax 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-verify-state[data-phase="READY"] .app-wax-rule {
+  animation: none;
+}
+
+@keyframes app-wax {
+  from { transform: scaleX(0.2); }
+  to { transform: scaleX(1); }
+}
+
+.app-operation-error,
+.app-target-cleared {
+  padding: 12px 16px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+}
+
+.app-operation-error {
+  color: #d94252;
+  background: #321719;
+}
+
+.app-target-cleared {
+  color: #31c978;
+  background: #321719;
+}
+
+.app-loading,
+.app-evidence-prompt {
+  padding: 24px;
+  border: 1px solid #74552e;
+  border-radius: 3px 18px 3px 3px;
+  background: #321719;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+#tribunal-workspace {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+  padding-top: 24px;
+}
+
+.app-parser-schema {
+  padding: 14px 16px;
+  border: 1px solid #74552e;
+  border-radius: 3px;
+  background: #321719;
+}
+
+.app-parser-schema summary {
+  min-height: 44px;
+  color: #f5e9cb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-parser-schema label,
+.app-parser-schema label > span {
+  display: grid;
+  gap: 8px;
+}
+
+.app-parser-schema label > span {
+  color: #e9d6aa;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.app-parser-schema textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 12px;
+  border: 1px solid #74552e;
+  border-radius: 3px;
+  color: #f5e9cb;
+  background: #090c0e;
+  font: 0.75rem/1.5 "Fragment Mono", ui-monospace, monospace;
+  resize: vertical;
+}
+
+.app-evidence-ledger {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr);
+  gap: 24px;
+  padding: 20px 24px;
+  border: 1px solid #74552e;
+  border-radius: 3px 18px 3px 3px;
+  background: #321719;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.app-evidence-ledger dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.app-evidence-ledger dl > div {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid #74552e;
+  background: #090c0e;
+  font-family: "Fragment Mono", ui-monospace, monospace;
+  overflow-wrap: anywhere;
+}
+
+.app-evidence-ledger dt {
+  color: #cdb37a;
+  font-size: 0.68rem;
+}
+
+.app-evidence-ledger dd {
+  margin: 2px 0 0;
+  color: #f5e9cb;
+  font-size: 0.82rem;
+}
+
+.app-export-bench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  padding: 24px;
+  border: 1px solid #a51f32;
+  border-radius: 3px 18px 3px 3px;
+  background: #321719;
+  box-shadow: 0 4px 0 rgba(72, 8, 18, 0.45), 0 16px 28px rgba(0, 0, 0, 0.28);
+}
+
+.app-export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 8px;
+}
+
+.app-export-actions a,
+.app-export-actions p {
+  margin: 0;
+}
+
+.app-export-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #a51f32;
+  border-radius: 3px;
+  color: #f5e9cb;
+  background: #a51f32;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-export-actions a:last-child {
+  color: #f5e9cb;
+  background: transparent;
+}
+
+@media (max-width: 1023px) {
+  .app-masthead,
+  .app-scroll-selector,
+  .app-evidence-ledger,
+  .app-export-bench {
+    grid-template-columns: 1fr;
+  }
+
+  .app-offline-ledger {
+    display: none;
+  }
+
+  .app-document-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .app-export-actions {
+    justify-content: start;
+  }
+
+  .app-shell .cov-source-pane {
+    box-shadow: 0 12px 0 #321719, 0 18px 32px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (max-width: 639px) {
+  .app-shell {
+    padding-inline: 12px;
+  }
+
+  .app-masthead {
+    gap: 12px;
+  }
+
+  .app-masthead__copy {
+    padding: 12px 0 0;
+    border-top: 1px solid #321719;
+    border-left: 0;
+  }
+
+  .app-scroll-selector__options,
+  .app-evidence-ledger dl,
+  .app-export-actions {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .app-verify-state {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-wax-rule {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .app-scroll-selector__options button[aria-pressed="true"],
+  .app-verify-state,
+  .app-evidence-ledger,
+  .app-export-bench,
+  .app-target-cleared {
+    border-color: Highlight;
+  }
+
+  .app-export-actions a {
+    border: 1px solid ButtonText;
+    color: ButtonText;
+    background: ButtonFace;
+    forced-color-adjust: none;
+  }
+}

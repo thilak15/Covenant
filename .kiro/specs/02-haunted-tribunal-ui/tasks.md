@@ -143,8 +143,8 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   _Requirements: 1.2–1.7, 3.1, 3.3–3.6, 10.1–10.5, 12.1, 12.3–12.6, 13.1–13.6, 14.1–14.6, 15.1–15.8, 16.1–16.7_
 
-- [ ] 11. Ship Clause Exorcist with three Cursed Scrolls and Legal Redline export
-  Status: open
+- [x] 11. Ship Clause Exorcist with three Cursed Scrolls and Legal Redline export
+  Status: resolved
 
   Blocked by: 10
 
@@ -173,14 +173,14 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   **Test seam to write first:** `app-2-clause-exorcist/src/App.test.tsx`. Render the application using public Core and Tribunal exports, select each normative App 2 fixture, assert exact source plus every expected core/witness or liveness finding, apply each finding's Chalice A and B from clean revisions, require 100% preservation outside its Repair Core, and assert the Legal Redline marks each replacement while the negotiation summary explains the selected strategy and formal effect in plain English.
 
-  - [ ] Encode the exact pre-verified AST, source locations, expected finding fingerprints, and normative edits for liability versus indemnification, freelance IP/kill fee/background IP, and SLA credit/cure/Force Majeure liveness.
-  - [ ] Validate fixtures and every standard pair before rendering; preserve multiple independent findings and reset stale selection/review/copy state when samples change.
-  - [ ] Reuse the same reducer and shared formal/UI seams as App 1 while applying the Clause Exorcist skin, wider legal reading measure, marginal references, mahogany wells, and restrained wax treatment.
-  - [ ] Support edited/pasted structured clauses through `parseOffline` without a network dependency and preserve source-located diagnostics when formalization is rejected or unsupported.
-  - [ ] Export a deterministic protective redline with textual addition/removal/replacement markers and a plain-English negotiation summary tied to the selected verified patch.
-  - [ ] Exercise all three samples with outbound network blocked, keyboard navigation, automated accessibility checks, all findings and both Chalices, exports, and visual captures at 360, 768, 1024, 1280, and 1600 CSS pixels.
-  - [ ] Extend browser bundle inspection across both production applications and reject Z3, WASM, Node built-ins, `SharedArrayBuffer`, remote fonts, required backend endpoints, or duplicated Core solver/parser/repair code.
-  - [ ] Run the complete repository build, unit/integration suite, 200-run PBT suite, typecheck, production source policy check, and both application browser suites as the release gate.
+  - [x] Encode the exact pre-verified AST, source locations, expected finding fingerprints, and normative edits for liability versus indemnification, freelance IP/kill fee/background IP, and SLA credit/cure/Force Majeure liveness.
+  - [x] Validate fixtures and every standard pair before rendering; preserve multiple independent findings and reset stale selection/review/copy state when samples change.
+  - [x] Reuse the same reducer and shared formal/UI seams as App 1 while applying the Clause Exorcist skin, wider legal reading measure, marginal references, mahogany wells, and restrained wax treatment.
+  - [x] Support edited/pasted structured clauses through `parseOffline` without a network dependency and preserve source-located diagnostics when formalization is rejected or unsupported.
+  - [x] Export a deterministic protective redline with textual addition/removal/replacement markers and a plain-English negotiation summary tied to the selected verified patch.
+  - [x] Exercise all three samples with outbound network blocked, keyboard navigation, automated accessibility checks, all findings and both Chalices, exports, and visual captures at 360, 768, 1024, 1280, and 1600 CSS pixels.
+  - [x] Extend browser bundle inspection across both production applications and reject Z3, WASM, Node built-ins, `SharedArrayBuffer`, remote fonts, required backend endpoints, or duplicated Core solver/parser/repair code.
+  - [x] Run the complete repository build, unit/integration suite, 200-run PBT suite, typecheck, production source policy check, and both application browser suites as the release gate.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/clause-exorcist exec vitest run src/App.test.tsx && pnpm --filter @covenant/clause-exorcist build && pnpm --filter @covenant/clause-exorcist exec playwright test && pnpm build && pnpm test && pnpm test:pbt && pnpm typecheck`
 

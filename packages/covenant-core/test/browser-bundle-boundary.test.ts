@@ -8,6 +8,9 @@ import { afterEach, describe, expect, it } from "vitest";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const forbiddenBrowserCode = /(?:z3-solver|NodeZ3Solver|SharedArrayBuffer|\.wasm)/u;
+const remoteFontHost = /fonts\.(?:googleapis|gstatic)\.com/u;
+const applicationBackend = /(?:\bfetch\s*\(|\bXMLHttpRequest\b|wss?:\/\/|https?:\/\/)/u;
+const duplicatedEngine = /export\s+(?:async\s+)?function\s+(?:parseOffline|verifyCovenant|applyChalicePatch|attachResolutions)|export\s+class\s+BrowserDeterministicSolver|function\s+dpll\b/u;
 const nodeBuiltins = new Set(builtinModules.map((name) => name.replace(/^node:/u, "")));
 const temporaryDirectories: string[] = [];
 
@@ -93,8 +96,12 @@ describe("the browser and Node solver boundary", () => {
   it("keeps application source and production browser bundles free from Node and Z3 code", () => {
     for (const application of ["app-1-spec-inquisitor", "app-2-clause-exorcist"]) {
       const source = sourceText(join(repositoryRoot, application, "src"));
+      expect(source).toMatch(/from "@covenant\/core"/u);
       expect(source).not.toMatch(/@covenant\/core\/node/u);
       expect(source).not.toMatch(forbiddenBrowserCode);
+      expect(source).not.toMatch(remoteFontHost);
+      expect(source).not.toMatch(applicationBackend);
+      expect(source).not.toMatch(duplicatedEngine);
       expect(nodeBuiltinReferences(source)).toEqual([]);
     }
 
@@ -143,6 +150,7 @@ describe("the browser and Node solver boundary", () => {
     const output = outputDirectories.map(bundleText).join("\n");
     expect(output).toContain("browserRootExports");
     expect(output).not.toMatch(forbiddenBrowserCode);
+    expect(output).not.toMatch(remoteFontHost);
     expect(nodeBuiltinReferences(output)).toEqual([]);
   });
 });
