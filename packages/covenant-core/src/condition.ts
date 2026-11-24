@@ -1,10 +1,12 @@
 import type {
   CompiledRule,
   Condition,
+  CovenantDocument,
   NormalizedAtom,
   NormalizedCondition,
   NumericBound,
   Rule,
+  RuleFingerprint,
   RuleScope,
   ScopeFacet,
   VariableAssignment,
@@ -123,12 +125,75 @@ export function conditionVariables(condition: NormalizedCondition): readonly str
   return [...found];
 }
 
-/** Canonicalizes commutative normalized conditions for semantic comparison. */
+/** Canonicalizes commutative normalized conditions as collision-free JSON. */
 export function normalizedConditionKey(condition: NormalizedCondition): string {
-  if (condition.kind === "TRUE" || condition.kind === "FALSE") return condition.kind;
-  if (condition.kind === "ATOM") return `ATOM:${stringifyCovenant(condition.atom)}`;
+  if (condition.kind === "TRUE" || condition.kind === "FALSE") return stringifyCovenant([condition.kind]);
+  if (condition.kind === "ATOM") {
+    const atom = condition.atom;
+    if (atom.kind === "BOOLEAN") return stringifyCovenant(["BOOLEAN", atom.variable, atom.equals]);
+    if (atom.kind === "ENUM") return stringifyCovenant(["ENUM", atom.variable, atom.operator, atom.value]);
+    const endpoint = (value: NumericBound["lower"]): readonly unknown[] | null => value === undefined
+      ? null
+      : [value.value.numerator, value.value.denominator, value.inclusive];
+    return stringifyCovenant([
+      "NUMERIC",
+      atom.bound.variable,
+      atom.bound.domain,
+      endpoint(atom.bound.lower),
+      endpoint(atom.bound.upper),
+    ]);
+  }
   const children = [...new Set(condition.conditions.map(normalizedConditionKey))].sort();
-  return `${condition.kind}:[${children.join(",")}]`;
+  return stringifyCovenant([condition.kind, children]);
+}
+
+/** Returns the canonical, normalized meaning of an authored condition. */
+export function conditionFingerprint(condition: Condition): string {
+  return normalizedConditionKey(normalizeCondition(condition));
+}
+
+function canonicalFacets(facets: readonly ScopeFacet[]): readonly string[] {
+  return [...new Set(facets.map((facet) =>
+    stringifyCovenant([facet.variable, [...new Set(facet.values)].sort()])))].sort();
+}
+
+/** Excludes identity and source coordinates while retaining complete normalized rule meaning. */
+export function ruleSemanticFingerprint(rule: Rule): string {
+  return stringifyCovenant([
+    [canonicalFacets(rule.scope.actors), canonicalFacets(rule.scope.resources), canonicalFacets(rule.scope.actions), conditionFingerprint(rule.scope.context)],
+    conditionFingerprint(rule.activation),
+    rule.modality,
+    conditionFingerprint(rule.consequence),
+  ]);
+}
+
+/** Uses the exact source slice and canonical normalized meaning; no opaque hash is involved. */
+export function ruleFingerprint(document: CovenantDocument, ruleId: string): RuleFingerprint {
+  const rule = document.rules.find((candidate) => candidate.id === ruleId);
+  if (rule === undefined) throw new TypeError(`Unknown rule ${ruleId}`);
+  return {
+    ruleId,
+    sourceFingerprint: document.source.text.slice(rule.source.start.offset, rule.source.end.offset),
+    semanticFingerprint: ruleSemanticFingerprint(rule),
+  };
+}
+
+/** Canonical complete post-patch rule sequence, retained in source order. */
+export function documentSemanticFingerprint(document: CovenantDocument): string {
+  return stringifyCovenant(document.rules.map((rule) => [rule.id, ruleSemanticFingerprint(rule)]));
+}
+
+/** Canonical compiled behavior used to reject logically duplicate repair options. */
+export function documentBehaviorFingerprint(document: CovenantDocument): string {
+  return stringifyCovenant(document.rules.map((rule) => {
+    const compiled = compileRule(rule);
+    return [
+      rule.id,
+      normalizedConditionKey(compiled.applicability),
+      compiled.hardConsequence === null ? null : normalizedConditionKey(compiled.hardConsequence),
+      compiled.permission === null ? null : normalizedConditionKey(compiled.permission),
+    ];
+  }));
 }
 
 function atomValue(atom: NormalizedAtom, assignments: ReadonlyMap<string, VariableAssignment["value"]>): boolean {

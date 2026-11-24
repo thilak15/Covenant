@@ -23,12 +23,13 @@
     "build": "pnpm check:loc && tsc -p tsconfig.build.json",
     "check:loc": "node ./scripts/check-loc.mjs",
     "dev": "tsc -p tsconfig.build.json --watch",
-    "test": "vitest run",
+    "test": "vitest run --minWorkers=1 --maxWorkers=1",
     "test:pbt": "vitest run --passWithNoTests test/pbt",
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^20.17.14",
+    "fast-check": "^4.11.0",
     "typescript": "^5.7.3",
     "vitest": "^2.1.9"
   },

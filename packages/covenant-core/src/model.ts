@@ -218,6 +218,21 @@ export interface ChalicePatch {
   readonly resultingSemanticFingerprint: string;
   readonly proof: PreservationProof;
 }
+export type PatchRejectionReason =
+  | "STALE_REVISION"
+  | "SOURCE_MISMATCH"
+  | "EDIT_OUTSIDE_CORE"
+  | "TARGET_NOT_FIXED"
+  | "PRESERVATION_FAILED"
+  | "REVERIFICATION_UNKNOWN";
+export type PatchApplicationResult =
+  | {
+      readonly status: "APPLIED";
+      readonly document: CovenantDocument;
+      readonly report: VerificationReport;
+      readonly proof: PreservationProof;
+    }
+  | { readonly status: "REJECTED"; readonly reason: PatchRejectionReason };
 export type ChaliceA = ChalicePatch & { readonly slot: "A" };
 export type ChaliceB = ChalicePatch & { readonly slot: "B" };
 export type UnpairedChalicePatch = ChalicePatch & { readonly slot: null };

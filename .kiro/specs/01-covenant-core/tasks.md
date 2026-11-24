@@ -144,8 +144,8 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   _Requirements: 4.1–4.6, 6.1–6.6, 14.7–14.11, 16.2, 16.4, 16.6_
 
-- [ ] 5. Apply verified Two Cursed Chalices and run the fast-check proof suite
-  Status: open
+- [x] 5. Apply verified Two Cursed Chalices and run the fast-check proof suite
+  Status: resolved
 
   Blocked by: 4
 
@@ -168,12 +168,12 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   **Test seam to write first:** `packages/covenant-core/test/repairs.test.ts`. Start from one standard contradiction with an unrelated rule, require an A/B `ChalicePair` tied to one immutable Repair Core, apply each option from a clean revision through public `applyChalicePatch`, and assert distinct resulting rule models, disappearance of the target finding, no new finding fingerprint, unchanged source and semantic fingerprints for `~C`, and literal `preservationPercent: 100`; also assert atomic stale-revision and source-mismatch rejection.
 
-  - [ ] Define collision-free canonical source, semantic, finding, and post-patch model strings; normalize commutative conditions and exact rationals before comparison.
-  - [ ] Implement standard pair templates and enforce A-then-B ordering, shared finding/core/revision identity, in-core edits only, and distinct post-patch models.
-  - [ ] Return honest `single` or `manual` payloads for custom findings without changing a proven `FAIL`.
-  - [ ] Validate all guards before applying edits in descending offset order, then parse, run all five Inquisitors, reject failed/unknown required proof, and prevent partial mutation.
-  - [ ] Generate jointly applicable contradictions, mutually exclusive rules, consequence-to-applicability conflicts, `C` plus independent `~C`, and supported tracked/untracked solver problems.
-  - [ ] Run Soundness, Preservation, and Solver Equivalence with at least 200 successful `fast-check` cases per property; discards do not count, core removals must break the same contradiction, and every SAT model must replay.
+  - [x] Define collision-free canonical source, semantic, finding, and post-patch model strings; normalize commutative conditions and exact rationals before comparison.
+  - [x] Implement standard pair templates and enforce A-then-B ordering, shared finding/core/revision identity, in-core edits only, and distinct post-patch models.
+  - [x] Return honest `single` or `manual` payloads for custom findings without changing a proven `FAIL`.
+  - [x] Validate all guards before applying edits in descending offset order, then parse, run all five Inquisitors, reject failed/unknown required proof, and prevent partial mutation.
+  - [x] Generate jointly applicable contradictions, mutually exclusive rules, consequence-to-applicability conflicts, `C` plus independent `~C`, and supported tracked/untracked solver problems.
+  - [x] Run Soundness, Preservation, and Solver Equivalence with at least 200 successful `fast-check` cases per property; discards do not count, core removals must break the same contradiction, and every SAT model must replay.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/repairs.test.ts && pnpm test:pbt && pnpm typecheck`
 
