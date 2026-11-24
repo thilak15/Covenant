@@ -1,0 +1,94 @@
+{
+  "suiteVersion": "1",
+  "properties": [
+    {
+      "property": "SOUNDNESS",
+      "requestedRuns": 400,
+      "successfulRuns": 400,
+      "edgeCases": [
+        {
+          "tag": "CONSEQUENCE_APPLICABILITY",
+          "count": 102
+        },
+        {
+          "tag": "DIRECT_CONSEQUENCE",
+          "count": 98
+        },
+        {
+          "tag": "MUTUALLY_EXCLUSIVE",
+          "count": 200
+        }
+      ],
+      "duplicateRuns": 395,
+      "discardedRuns": 0,
+      "seed": 20261123,
+      "durationMs": 221
+    },
+    {
+      "property": "PRESERVATION",
+      "requestedRuns": 200,
+      "successfulRuns": 200,
+      "edgeCases": [
+        {
+          "tag": "CHALICE_A",
+          "count": 97
+        },
+        {
+          "tag": "CHALICE_B",
+          "count": 103
+        }
+      ],
+      "duplicateRuns": 192,
+      "discardedRuns": 0,
+      "seed": 20261123,
+      "durationMs": 350
+    },
+    {
+      "property": "SOLVER_EQUIVALENCE",
+      "requestedRuns": 200,
+      "successfulRuns": 200,
+      "edgeCases": [
+        {
+          "tag": "BOOLEAN",
+          "count": 26
+        },
+        {
+          "tag": "DECIMAL_OPEN_INTERVAL",
+          "count": 24
+        },
+        {
+          "tag": "EMPTY_INTERSECTION",
+          "count": 31
+        },
+        {
+          "tag": "ENUM",
+          "count": 35
+        },
+        {
+          "tag": "EQUAL_BOUND",
+          "count": 11
+        },
+        {
+          "tag": "INTEGER_GAP",
+          "count": 12
+        },
+        {
+          "tag": "STRICT_BOUND",
+          "count": 18
+        },
+        {
+          "tag": "TRACKED",
+          "count": 24
+        },
+        {
+          "tag": "UNBOUNDED",
+          "count": 19
+        }
+      ],
+      "duplicateRuns": 103,
+      "discardedRuns": 0,
+      "seed": 20261123,
+      "durationMs": 1817
+    }
+  ]
+}

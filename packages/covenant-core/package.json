@@ -24,7 +24,7 @@
     "check:loc": "node ./scripts/check-loc.mjs",
     "dev": "tsc -p tsconfig.build.json --watch",
     "test": "vitest run --minWorkers=1 --maxWorkers=1",
-    "test:pbt": "vitest run --passWithNoTests test/pbt",
+    "test:pbt": "vitest run --passWithNoTests test/pbt --minWorkers=1 --maxWorkers=1 && tsc ./scripts/generate-open-pbt-stats.mts --outDir node_modules/.cache/covenant-open-pbt-generator --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --exactOptionalPropertyTypes --noUncheckedIndexedAccess --noImplicitOverride --noFallthroughCasesInSwitch --skipLibCheck --types node && node node_modules/.cache/covenant-open-pbt-generator/generate-open-pbt-stats.mjs",
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {

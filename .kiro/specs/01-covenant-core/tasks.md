@@ -179,8 +179,8 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   _Requirements: 12.1, 12.3–12.18, 13.1–13.5, 14.1–14.11, 16.1, 16.4_
 
-- [ ] 6. Export and format reproducible OpenPBTStats separately from live telemetry
-  Status: open
+- [x] 6. Export and format reproducible OpenPBTStats separately from live telemetry
+  Status: resolved
 
   Blocked by: 5
 
@@ -201,10 +201,10 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   **Test seam to write first:** `packages/covenant-core/test/pbt-stats.test.ts`. Import the checked-in snapshot and both public formatters; reject malformed property order and invalid counts, assert Soundness/Preservation/Solver Equivalence ordering, stable row output, duplicate and discard accounting, and prove that formatting `VerificationTelemetry` never adds PBT fields or mutates the snapshot.
 
-  - [ ] Record requested and successful runs, edge-case tags, normalized-input duplicates, precondition discards, seed, and duration without counting discards as successes.
-  - [ ] Generate the three-property snapshot from one reported fixed seed and validate it as `unknown` before exposing typed data to browser consumers.
-  - [ ] Format exact PBT display rows and live solver rows through separate functions and keep browser imports free from `fast-check` and test execution.
-  - [ ] Keep the generated JSON outside the LOC count while retaining deterministic build output and root browser-safe exports.
+  - [x] Record requested and successful runs, edge-case tags, normalized-input duplicates, precondition discards, seed, and duration without counting discards as successes.
+  - [x] Generate the three-property snapshot from one reported fixed seed and validate it as `unknown` before exposing typed data to browser consumers.
+  - [x] Format exact PBT display rows and live solver rows through separate functions and keep browser imports free from `fast-check` and test execution.
+  - [x] Keep the generated JSON outside the LOC count while retaining deterministic build output and root browser-safe exports.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/pbt-stats.test.ts && pnpm test:pbt && pnpm --filter @covenant/core build && pnpm typecheck`
 

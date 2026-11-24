@@ -8,3 +8,4 @@ export { BrowserDeterministicSolver } from "./browser-deterministic-solver.js";
 export { cweControls, securityControlVariableNames } from "./security-controls.js";
 export { findingFingerprint } from "./repairs.js";
 export { applyChalicePatch, verifyCovenant } from "./engine.js";
+export { formatOpenPBTStats, formatVerificationTelemetry, openPBTStatsSnapshot, validateOpenPBTSnapshot } from "./pbt-stats.js";

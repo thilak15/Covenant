@@ -325,6 +325,15 @@ export interface OpenPBTStats<P extends PBTProperty = PBTProperty> {
   readonly seed: number;
   readonly durationMs: number;
 }
+export interface OpenPBTSnapshot {
+  readonly suiteVersion: string;
+  readonly properties: readonly [
+    OpenPBTStats<"SOUNDNESS">,
+    OpenPBTStats<"PRESERVATION">,
+    OpenPBTStats<"SOLVER_EQUIVALENCE">,
+  ];
+}
+export interface TelemetryRow { readonly label: string; readonly value: string }
 export interface CweControl {
   readonly id: CweControlId;
   readonly title: string;
