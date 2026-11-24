@@ -10,10 +10,10 @@
     "dev": "pnpm -r --parallel --if-present dev",
     "build": "pnpm -r --if-present build",
     "test": "pnpm -r --if-present test",
-    "test:pbt": "pnpm --filter @covenant/core --if-present test:pbt",
-    "typecheck": "pnpm -r --if-present typecheck"
+    "test:pbt": "pnpm --filter @covenant/core test:pbt",
+    "typecheck": "pnpm --filter @covenant/core check:loc && pnpm -r --if-present typecheck"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "typescript": "^5.7.3"
   }
 }
