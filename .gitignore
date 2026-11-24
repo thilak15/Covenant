@@ -8,3 +8,4 @@ dist/
 # Always keep these tracked
 !.kiro/
 !powers/
+semantic-review/
