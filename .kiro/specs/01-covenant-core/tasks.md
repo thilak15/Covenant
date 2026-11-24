@@ -113,8 +113,8 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   _Requirements: 3.7–3.10, 4.1–4.7, 5.1–5.6, 7.1–7.9, 8.1–8.6, 9.1–9.6, 10.1–10.10, 13.1–13.5, 16.1, 16.4_
 
-- [ ] 4. Cross-verify the solver contract through the Node-only Z3 adapter
-  Status: open
+- [x] 4. Cross-verify the solver contract through the Node-only Z3 adapter
+  Status: resolved
 
   Blocked by: 3
 
@@ -134,11 +134,11 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   **Test seam to write first:** `packages/covenant-core/test/node-z3-equivalence.test.ts`. Import `BrowserDeterministicSolver` from `@covenant/core` and `NodeZ3Solver` only from `@covenant/core/node`; run the same tracked and untracked Boolean, enum, integer, and exact decimal problems through both, assert equal status and canonical core IDs, require `core: null` for untracked `UNSAT`, and replay every SAT assignment.
 
-  - [ ] Add `z3-solver` only to the Core package's Node/test dependency graph and expose it only through the conditional `./node` export.
-  - [ ] Initialize Z3 asynchronously, encode enums exactly once, preserve Int versus Real semantics, and encode rationals as exact quotients.
-  - [ ] Use the shared reverse-source minimizer instead of backend-specific core selection and validate every returned SAT assignment before accepting it.
-  - [ ] Preserve unsupported theory as `UNKNOWN` without initializing Z3 and map adapter faults at the verification layer without weakening independent `FAIL` verdicts.
-  - [ ] Build and inspect a browser fixture, rejecting Node built-ins, `z3-solver`, `NodeZ3Solver`, `.wasm`, and `SharedArrayBuffer` in the root export graph and output.
+  - [x] Add `z3-solver` only to the Core package's Node/test dependency graph and expose it only through the conditional `./node` export.
+  - [x] Initialize Z3 asynchronously, encode enums exactly once, preserve Int versus Real semantics, and encode rationals as exact quotients.
+  - [x] Use the shared reverse-source minimizer instead of backend-specific core selection and validate every returned SAT assignment before accepting it.
+  - [x] Preserve unsupported theory as `UNKNOWN` without initializing Z3 and map adapter faults at the verification layer without weakening independent `FAIL` verdicts.
+  - [x] Build and inspect a browser fixture, rejecting Node built-ins, `z3-solver`, `NodeZ3Solver`, `.wasm`, and `SharedArrayBuffer` in the root export graph and output.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/node-z3-equivalence.test.ts test/browser-bundle-boundary.test.ts && pnpm --filter @covenant/core build && pnpm typecheck`
 

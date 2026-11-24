@@ -152,9 +152,18 @@ function atomValue(atom: NormalizedAtom, assignments: ReadonlyMap<string, Variab
   return true;
 }
 
-export function evaluateNormalizedCondition(condition: NormalizedCondition, table: readonly VariableAssignment[]): boolean {
-  const assignments = new Map(table.map((entry) => [entry.variable, entry.value]));
+export function evaluateNormalizedCondition(
+  condition: NormalizedCondition,
+  table: readonly VariableAssignment[],
+  onStep?: () => void,
+): boolean {
+  const assignments = new Map<string, VariableAssignment["value"]>();
+  for (const entry of table) {
+    onStep?.();
+    assignments.set(entry.variable, entry.value);
+  }
   const evaluate = (node: NormalizedCondition): boolean => {
+    onStep?.();
     switch (node.kind) {
       case "TRUE": return true;
       case "FALSE": return false;
@@ -164,6 +173,34 @@ export function evaluateNormalizedCondition(condition: NormalizedCondition, tabl
     }
   };
   return evaluate(condition);
+}
+
+export async function evaluateNormalizedConditionsWithBudget(
+  conditions: readonly NormalizedCondition[],
+  table: readonly VariableAssignment[],
+  onStep: () => void | Promise<void>,
+): Promise<boolean> {
+  const assignments = new Map<string, VariableAssignment["value"]>();
+  for (const entry of table) {
+    await onStep();
+    assignments.set(entry.variable, entry.value);
+  }
+  const evaluate = async (node: NormalizedCondition): Promise<boolean> => {
+    await onStep();
+    switch (node.kind) {
+      case "TRUE": return true;
+      case "FALSE": return false;
+      case "ATOM": return atomValue(node.atom, assignments);
+      case "ALL":
+        for (const child of node.conditions) if (!await evaluate(child)) return false;
+        return true;
+      case "ANY":
+        for (const child of node.conditions) if (await evaluate(child)) return true;
+        return false;
+    }
+  };
+  for (const condition of conditions) if (!await evaluate(condition)) return false;
+  return true;
 }
 
 export function evaluateCondition(condition: Condition, table: readonly VariableAssignment[]): boolean {

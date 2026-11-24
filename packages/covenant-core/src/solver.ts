@@ -20,7 +20,7 @@ import type {
   VariableDeclaration,
   VerificationTelemetry,
 } from "./model.js";
-import { conditionVariables } from "./condition.js";
+import { conditionVariables, evaluateNormalizedConditionsWithBudget } from "./condition.js";
 import {
   absoluteRational,
   addRationals,
@@ -267,8 +267,51 @@ function assignment(variables: readonly VariableDeclaration[], state: SearchStat
   return variables.map((variable) => ({ variable: variable.name, value: chooseScalar(variable, state) }));
 }
 
-function conditionsOf(problem: SolverProblem, groups = problem.ruleGroups): readonly NormalizedCondition[] {
+export function solverProblemConstraints(
+  problem: SolverProblem,
+  groups: readonly SolverRuleGroup[] = problem.ruleGroups,
+): readonly NormalizedCondition[] {
   return [...problem.fixedConstraints, ...groups.flatMap((group) => group.constraints)];
+}
+
+function scalarMatchesDeclaration(
+  declaration: VariableDeclaration,
+  scalar: ScalarValue,
+): boolean {
+  if (declaration.kind === "BOOLEAN") return scalar.kind === "BOOLEAN";
+  if (declaration.kind === "ENUM") return scalar.kind === "ENUM" && declaration.values.includes(scalar.value);
+  if (declaration.domain === "INTEGER") {
+    if (scalar.kind !== "INTEGER") return false;
+    return contains(declaration.range ?? {}, makeRational(scalar.value, 1n));
+  }
+  return scalar.kind === "DECIMAL" && contains(declaration.range ?? {}, scalar.value);
+}
+
+/** Replays a complete model against declarations and every active constraint. */
+export async function assignmentSatisfiesSolverProblem(
+  problem: SolverProblem,
+  model: AssignmentTable,
+  groups: readonly SolverRuleGroup[] = problem.ruleGroups,
+  onStep: () => void | Promise<void> = () => undefined,
+): Promise<boolean> {
+  await onStep();
+  if (model.length !== problem.variables.length) return false;
+  const assignments = new Map<string, ScalarValue>();
+  for (const entry of model) {
+    await onStep();
+    assignments.set(entry.variable, entry.value);
+  }
+  if (assignments.size !== model.length) return false;
+  for (const declaration of problem.variables) {
+    await onStep();
+    const scalar = assignments.get(declaration.name);
+    if (scalar === undefined || !scalarMatchesDeclaration(declaration, scalar)) return false;
+  }
+  return evaluateNormalizedConditionsWithBudget(
+    solverProblemConstraints(problem, groups),
+    model,
+    onStep,
+  );
 }
 
 function rangeIsWellFormed(range: NumericRange, domain: NumericDomain): boolean {
@@ -310,7 +353,7 @@ export function validateSolverProblem(problem: CovenantProblem): void {
     throw new TypeError("Solver rule groups require matching IDs, consequences, and constraints");
   }
   if (problem.coreTracking === "RULES" && groups.length < 2) throw new TypeError("Tracked problems require at least two rule groups");
-  for (const condition of conditionsOf(problem)) {
+  for (const condition of solverProblemConstraints(problem)) {
     if (!conditionIsWellFormed(condition, declarations)) throw new TypeError("Solver condition does not match its declaration");
   }
   for (const group of groups) {
@@ -365,7 +408,7 @@ export function searchProblem(
   groups: readonly SolverRuleGroup[],
   budget: SearchBudget,
 ): SolverSat | { readonly status: "UNSAT" } {
-  const state = solveConstraints(problem.variables, conditionsOf(problem, groups), budget);
+  const state = solveConstraints(problem.variables, solverProblemConstraints(problem, groups), budget);
   return state === null ? { status: "UNSAT" } : { status: "SAT", model: assignment(problem.variables, state), telemetry: browserTelemetry(budget) };
 }
 

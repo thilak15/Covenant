@@ -8,6 +8,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
+import { builtinModules } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
@@ -15,6 +16,19 @@ import { afterEach, describe, expect, it } from "vitest";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const temporaryDirectories: string[] = [];
+const nodeBuiltins = new Set(builtinModules.map((name) => name.replace(/^node:/u, "")));
+
+function nodeBuiltinReferences(source: string): readonly string[] {
+  const references: string[] = [];
+  const importPattern = /(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*|\brequire\s*\(\s*)["']([^"']+)["']/gu;
+  for (const match of source.matchAll(importPattern)) {
+    const specifier = match[1];
+    if (specifier !== undefined && (specifier.startsWith("node:") || nodeBuiltins.has(specifier))) {
+      references.push(specifier);
+    }
+  }
+  return references;
+}
 
 function readJson(relativePath: string): Record<string, unknown> {
   const parsed: unknown = JSON.parse(readFileSync(join(repositoryRoot, relativePath), "utf8"));
@@ -156,7 +170,7 @@ describe("the monorepo package boundary", () => {
     expect(typedFiles.flatMap(explicitAnyLocations)).toEqual([]);
   });
 
-  it("keeps the public root entry browser-safe before a Node entry exists", async () => {
+  it("keeps the public root entry browser-safe when the Node subpath exists", async () => {
     const corePackage = readJson("packages/covenant-core/package.json");
     const exportsMap = readRecord(corePackage.exports);
     const rootExport = readRecord(exportsMap["."]);
@@ -166,7 +180,10 @@ describe("the monorepo package boundary", () => {
       import: "./dist/index.js",
       types: "./dist/index.d.ts",
     });
-    expect(exportsMap["./node"]).toBeUndefined();
+    expect(exportsMap["./node"]).toEqual({
+      types: "./dist/node/index.d.ts",
+      node: "./dist/node/index.js",
+    });
 
     const rootSource = readFileSync(join(repositoryRoot, "packages/covenant-core/src/index.ts"), "utf8");
     expect(rootSource).not.toMatch(/(?:node:|z3-solver|NodeZ3Solver|\.\/node)/u);
@@ -223,9 +240,11 @@ describe("the monorepo package boundary", () => {
       ]);
       bundles.push(readBundle(output));
     }
-    expect(bundles.join("\n")).not.toMatch(
-      /(?:node:(?:assert|buffer|child_process|crypto|fs|http|https|module|os|path|stream|url|util|worker_threads)|z3-solver|NodeZ3Solver|SharedArrayBuffer|\.wasm)/u,
+    const browserOutput = bundles.join("\n");
+    expect(browserOutput).not.toMatch(
+      /(?:z3-solver|NodeZ3Solver|SharedArrayBuffer|\.wasm)/u,
     );
+    expect(nodeBuiltinReferences(browserOutput)).toEqual([]);
   });
 
   it("reports production TypeScript size without imposing a hard cap", () => {
