@@ -1,11 +1,34 @@
-export { InquisitorLanternBar, PhantomWitnessStand, SplitScrollInspector, TribunalTheme } from "./Tribunal.js";
-export { lanternFlareVariants, lanternItemVariants, lanternRailVariants, tribunalDuration, tribunalEasing } from "./motion.js";
+export {
+  CertificationSeal,
+  ChaliceResolutionPanel,
+  InquisitorLanternBar,
+  PhantomWitnessStand,
+  SplitScrollInspector,
+  TribunalTheme,
+  VerificationDrawer,
+} from "./Tribunal.js";
+export {
+  certificationSealVariants,
+  lanternFlareVariants,
+  lanternItemVariants,
+  lanternRailVariants,
+  patchReviewVariants,
+  patchSourceVariants,
+  tribunalDuration,
+  tribunalEasing,
+  verificationDrawerVariants,
+} from "./motion.js";
+export type { PatchSourceRole } from "./motion.js";
 export type {
+  CertificationSealProps,
+  ChaliceResolutionPanelProps,
   CopyEvidenceResult,
   FindingSelection,
   InquisitorFilter,
   InquisitorLanternBarProps,
   InspectorSourceState,
+  PatchApplyState,
+  PbtPresentationState,
   PhantomWitnessStandProps,
   SourceChangeKind,
   SourceChangeMarker,
@@ -13,4 +36,5 @@ export type {
   TribunalSkin,
   TribunalStatus,
   TribunalThemeProps,
+  VerificationDrawerProps,
 } from "./types.js";

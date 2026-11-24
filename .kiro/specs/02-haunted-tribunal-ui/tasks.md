@@ -70,8 +70,8 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   _Requirements: 5.1–5.7, 6.1–6.5, 13.2–13.6, 14.2–14.6, 15.1–15.8, 16.3_
 
-- [ ] 9. Complete verified Chalice, certification seal, and telemetry drawer interactions
-  Status: open
+- [x] 9. Complete verified Chalice, certification seal, and telemetry drawer interactions
+  Status: resolved
 
   Blocked by: 8
 
@@ -91,12 +91,12 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   **Test seam to write first:** `packages/covenant-core/test/tribunal-ui/chalice-resolution-panel.test.tsx`. Render one proven `FAIL` successively with `pair`, `single`, and `manual` payloads; assert A-before-B peer weight, inline expected/replacement review, unchanged verdict, locked competing actions during apply, valid 100% proof after success, no apply control for manual repair, and source-preserving focus recovery for every typed rejection and unresolved re-verification.
 
-  - [ ] Implement the `IDLE -> REVIEWING -> APPLYING -> APPLIED | REJECTED` patch presentation state without solving or calculating preservation inside React.
-  - [ ] Keep the verdict visible and independent from repair availability; render target IDs, strategy, revision, source diff, and proof text from Core values.
-  - [ ] Gate `CertificationSeal` on both `report.certifiable` and five `PASS` values, include revision text, and render explicit blocked reasons otherwise.
-  - [ ] Implement the non-modal verification disclosure with one-line collapsed ledger, separate live and Node-PBT sections, Escape focus restoration, and no browser PBT execution.
-  - [ ] Apply the finite motion choreography and final static reduced-motion states without looping, shimmer, flicker, or paint-heavy effects.
-  - [ ] Cover loading with prior evidence, empty filter, operational `UNKNOWN`, invalid evidence, rejected source, invalid PBT snapshot, overlong content, forced colors, and assistive announcements.
+  - [x] Implement the `IDLE -> REVIEWING -> APPLYING -> APPLIED | REJECTED` patch presentation state without solving or calculating preservation inside React.
+  - [x] Keep the verdict visible and independent from repair availability; render target IDs, strategy, revision, source diff, and proof text from Core values.
+  - [x] Gate `CertificationSeal` on both `report.certifiable` and five `PASS` values, include revision text, and render explicit blocked reasons otherwise.
+  - [x] Implement the non-modal verification disclosure with one-line collapsed ledger, separate live and Node-PBT sections, Escape focus restoration, and no browser PBT execution.
+  - [x] Apply the finite motion choreography and final static reduced-motion states without looping, shimmer, flicker, or paint-heavy effects.
+  - [x] Cover loading with prior evidence, empty filter, operational `UNKNOWN`, invalid evidence, rejected source, invalid PBT snapshot, overlong content, forced colors, and assistive announcements.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/tribunal-ui/chalice-resolution-panel.test.tsx test/tribunal-ui/certification-seal.test.tsx test/tribunal-ui/verification-drawer.test.tsx test/tribunal-ui/resilient-states.test.tsx && pnpm --filter @covenant/core build && pnpm typecheck`
 

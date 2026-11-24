@@ -5,12 +5,17 @@ import type {
   FiveInquisitorVerdicts,
   Inquisitor,
   NonEmpty,
+  OpenPBTSnapshot,
   ParseDiagnostic,
+  PatchRejectionReason,
   PhantomWitness,
+  PreservationProof,
+  ResolutionPayload,
   RuleId,
   SourceDocument,
   VerdictStatus,
   VerificationReport,
+  VerificationTelemetry,
 } from "../model.js";
 
 export type TribunalSkin = "spec-inquisitor" | "clause-exorcist";
@@ -75,4 +80,43 @@ export interface PhantomWitnessStandProps {
   readonly witness: PhantomWitness;
   readonly copyStatus: "IDLE" | CopyEvidenceResult;
   readonly onCopy: (plainText: string) => Promise<CopyEvidenceResult>;
+}
+
+export type PbtPresentationState =
+  | { readonly status: "VALID"; readonly snapshot: OpenPBTSnapshot }
+  | { readonly status: "INVALID"; readonly reason: string };
+
+export type PatchApplyState =
+  | { readonly status: "IDLE" }
+  | { readonly status: "REVIEWING"; readonly patchId: string }
+  | { readonly status: "APPLYING"; readonly patchId: string }
+  | {
+      readonly status: "REJECTED";
+      readonly patchId: string;
+      readonly reason: PatchRejectionReason;
+    }
+  | {
+      readonly status: "APPLIED";
+      readonly patchId: string;
+      readonly proof: PreservationProof;
+    };
+
+export interface ChaliceResolutionPanelProps {
+  readonly verdict: VerdictStatus;
+  readonly resolution: ResolutionPayload;
+  readonly applyState: PatchApplyState;
+  readonly onReview: (patchId: string) => void;
+  readonly onCancelReview: () => void;
+  readonly onApply: (patchId: string) => void;
+}
+
+export interface CertificationSealProps {
+  readonly report: VerificationReport;
+}
+
+export interface VerificationDrawerProps {
+  readonly telemetry: readonly VerificationTelemetry[];
+  readonly pbt: PbtPresentationState;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
 }

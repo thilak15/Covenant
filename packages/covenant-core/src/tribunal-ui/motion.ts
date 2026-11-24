@@ -64,3 +64,85 @@ export function lanternFlareVariants(reducedMotion: boolean): Variants {
         },
   };
 }
+
+export function patchReviewVariants(reducedMotion: boolean): Variants {
+  return {
+    closed: { opacity: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : -6 },
+    open: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: reducedMotion ? 0 : tribunalDuration.panel, ease: tribunalEasing.settle },
+    },
+  };
+}
+
+export type PatchSourceRole = "expected" | "replacement";
+
+export function patchSourceVariants(reducedMotion: boolean, role: PatchSourceRole): Variants {
+  const idle = { opacity: 1, x: 0 } as const;
+  if (reducedMotion) {
+    return {
+      idle,
+      reviewing: { opacity: 1, x: 0, transition: { duration: 0 } },
+    };
+  }
+  return {
+    idle,
+    reviewing: role === "expected"
+      ? {
+          opacity: [1, 0.35, 1],
+          x: [0, -4, 0],
+          transition: { duration: tribunalDuration.panel, ease: tribunalEasing.settle },
+        }
+      : {
+          opacity: [0.55, 1],
+          x: [4, 0],
+          transition: { duration: tribunalDuration.panel, ease: tribunalEasing.settle },
+        },
+  };
+}
+
+export function verificationDrawerVariants(reducedMotion: boolean): Variants {
+  if (reducedMotion) {
+    return {
+      closed: { height: 0, opacity: 0, y: 0, transition: { duration: 0 } },
+      open: { height: "auto", opacity: 1, y: 0, transition: { duration: 0 } },
+    };
+  }
+  return {
+    closed: {
+      height: 0,
+      opacity: 0,
+      y: 10,
+      transition: { duration: 0.24, ease: tribunalEasing.control },
+    },
+    open: {
+      height: "auto",
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.24, ease: tribunalEasing.settle },
+    },
+  };
+}
+
+export function certificationSealVariants(reducedMotion: boolean): Variants {
+  if (reducedMotion) {
+    return {
+      unsealed: { opacity: 1, rotate: 0, scale: 1 },
+      sealed: { opacity: 1, rotate: 0, scale: 1, transition: { duration: 0 } },
+    };
+  }
+  return {
+    unsealed: { opacity: 1, rotate: -7, scale: 1.35 },
+    sealed: {
+      opacity: 1,
+      rotate: [-7, -2, 0],
+      scale: [1.35, 0.96, 1],
+      transition: {
+        duration: tribunalDuration.certification,
+        ease: tribunalEasing.settle,
+        times: [0, 0.62, 1],
+      },
+    },
+  };
+}

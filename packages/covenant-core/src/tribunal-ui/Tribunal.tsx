@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import type { MotionStyle } from "framer-motion";
 import {
+  ChevronDown,
   CircleCheckBig,
   CircleHelp,
   CircleUserRound,
@@ -12,28 +13,50 @@ import {
   OctagonX,
   RefreshCcw,
   Replace,
+  ShieldCheck,
+  TriangleAlert,
+  Wine,
 } from "lucide-react";
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, KeyboardEvent, PointerEvent as ReactPointerEvent, ReactElement } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent as ReactPointerEvent, ReactElement, RefObject } from "react";
 import type {
+  ChalicePatch,
   Condition,
   EvidenceByInquisitor,
   FiveInquisitorVerdicts,
   Inquisitor,
+  PatchRejectionReason,
+  PreservationProof,
   ScalarValue,
+  TelemetryRow,
   TriggeredConsequence,
   VerdictStatus,
   VerificationReport,
 } from "../model.js";
-import { lanternFlareVariants, lanternItemVariants, lanternRailVariants, tribunalDuration, tribunalEasing, useTribunalReducedMotion } from "./motion.js";
+import { formatOpenPBTStats, formatVerificationTelemetry } from "../pbt-stats.js";
+import {
+  certificationSealVariants,
+  lanternFlareVariants,
+  lanternItemVariants,
+  lanternRailVariants,
+  patchReviewVariants,
+  patchSourceVariants,
+  tribunalDuration,
+  tribunalEasing,
+  useTribunalReducedMotion,
+  verificationDrawerVariants,
+} from "./motion.js";
 import type {
+  CertificationSealProps,
+  ChaliceResolutionPanelProps,
   CopyEvidenceResult,
   FindingSelection,
   InquisitorLanternBarProps,
   PhantomWitnessStandProps,
-  SourceChangeKind,
   SplitScrollInspectorProps,
+  SourceChangeKind,
   TribunalThemeProps,
+  VerificationDrawerProps,
 } from "./types.js";
 
 const INQUISITOR_NAMES = {
@@ -796,5 +819,386 @@ export function PhantomWitnessStand({ witness, copyStatus, onCopy }: PhantomWitn
         </div>
       ) : null}
     </section>
+  );
+}
+
+const PATCH_REJECTION_COPY: Readonly<Record<PatchRejectionReason, string>> = {
+  STALE_REVISION: "The source revision changed after this Chalice was verified. Review the current source and try again.",
+  SOURCE_MISMATCH: "The guarded expected source no longer matches. No edit was applied.",
+  EDIT_OUTSIDE_CORE: "The patch would edit a rule outside its authorized Repair Core.",
+  TARGET_NOT_FIXED: "Re-verification found that the target finding remains or a new finding appeared.",
+  PRESERVATION_FAILED: "The Preservation Property could not prove every non-conflicting rule remained intact.",
+  REVERIFICATION_UNKNOWN: "Required re-verification returned UNKNOWN. The patch cannot be certified.",
+};
+
+function chaliceLabel(patch: ChalicePatch): string {
+  return patch.slot === null ? "Verified Chalice" : `Chalice ${patch.slot}`;
+}
+
+function resolutionPatches(resolution: ChaliceResolutionPanelProps["resolution"]): readonly ChalicePatch[] {
+  if (resolution.kind === "pair") return resolution.patches;
+  if (resolution.kind === "single") return [resolution.patch];
+  return [];
+}
+
+function PatchProofSummary({ proof }: { readonly proof: PreservationProof }): ReactElement {
+  const count = proof.preservedRules.length;
+  return (
+    <p className="cov-chalice-option__proof">
+      <ShieldCheck aria-hidden="true" size={17} />
+      <span>Verified proof: conflict fixed; {count} non-conflicting {count === 1 ? "rule" : "rules"} preserved.</span>
+    </p>
+  );
+}
+
+function GuardedEdits({ patch, reviewing, reducedMotion }: {
+  readonly patch: ChalicePatch;
+  readonly reviewing: boolean;
+  readonly reducedMotion: boolean;
+}): ReactElement {
+  return (
+    <ol className="cov-chalice-edits" aria-label={`${chaliceLabel(patch)} guarded source edits`}>
+      {patch.edits.map((edit, index) => (
+        <li key={`${edit.ruleId}:${edit.startOffset}:${edit.endOffset}:${index}`}>
+          <p><strong>Rule {edit.ruleId}</strong><span>Offsets {edit.startOffset}–{edit.endOffset}</span></p>
+          <div className="cov-chalice-diff" data-change-kind="REPLACEMENT">
+            <motion.div
+              data-source-role="expected"
+              variants={patchSourceVariants(reducedMotion, "expected")}
+              initial="idle"
+              animate={reviewing ? "reviewing" : "idle"}
+            >
+              <span><FileMinus2 aria-hidden="true" size={15} />Expected source</span>
+              <code>{edit.expectedText}</code>
+            </motion.div>
+            <motion.div
+              data-source-role="replacement"
+              variants={patchSourceVariants(reducedMotion, "replacement")}
+              initial="idle"
+              animate={reviewing ? "reviewing" : "idle"}
+            >
+              <span><FilePlus2 aria-hidden="true" size={15} />Replacement source</span>
+              <code>{edit.replacementText}</code>
+            </motion.div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function AppliedProof({ label, proof, focusRef }: {
+  readonly label: string;
+  readonly proof: PreservationProof;
+  readonly focusRef: RefObject<HTMLDivElement | null>;
+}): ReactElement {
+  return (
+    <div ref={focusRef} className="cov-chalice-result cov-chalice-result--applied" role="status" tabIndex={-1}>
+      <CircleCheckBig aria-hidden="true" size={22} />
+      <div>
+        <h4>{label} applied</h4>
+        <p><strong>{proof.preservationPercent}% preserved</strong> by Preservation Property proof {proof.repairCoreId}.</p>
+        <p>Conflict fixed for {proof.conflictRuleIds.join(", ")}. Preserved outside the conflict: {proof.preservedRules.map(({ ruleId }) => ruleId).join(", ") || "No non-conflicting rules in this document"}.</p>
+      </div>
+    </div>
+  );
+}
+
+export function ChaliceResolutionPanel({
+  verdict,
+  resolution,
+  applyState,
+  onReview,
+  onCancelReview,
+  onApply,
+}: ChaliceResolutionPanelProps): ReactElement {
+  const reducedMotion = useTribunalReducedMotion();
+  const headingId = useId();
+  const rejectionHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const reviewHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const applyingStatusRef = useRef<HTMLParagraphElement | null>(null);
+  const appliedResultRef = useRef<HTMLDivElement | null>(null);
+  const reviewButtonRefs = useRef(new Map<string, HTMLButtonElement>());
+  const previousApplyStateRef = useRef<ChaliceResolutionPanelProps["applyState"] | null>(null);
+  const patches = resolutionPatches(resolution);
+  const applying = applyState.status === "APPLYING";
+  const stateKey = applyState.status === "IDLE"
+    ? "IDLE"
+    : applyState.status === "REJECTED"
+      ? `${applyState.status}:${applyState.patchId}:${applyState.reason}`
+      : `${applyState.status}:${applyState.patchId}`;
+  const activePatch = "patchId" in applyState
+    ? patches.find((patch) => patch.id === applyState.patchId) ?? null
+    : null;
+
+  useLayoutEffect(() => {
+    const previous = previousApplyStateRef.current;
+    if (applyState.status === "REVIEWING") reviewHeadingRef.current?.focus();
+    if (applyState.status === "APPLYING") applyingStatusRef.current?.focus();
+    if (applyState.status === "APPLIED") appliedResultRef.current?.focus();
+    if (applyState.status === "REJECTED") rejectionHeadingRef.current?.focus();
+    if (applyState.status === "IDLE" && previous !== null && "patchId" in previous) {
+      reviewButtonRefs.current.get(previous.patchId)?.focus();
+    }
+    previousApplyStateRef.current = applyState;
+  }, [stateKey]);
+
+  return (
+    <section
+      className="cov-chalice-panel"
+      aria-labelledby={headingId}
+      data-presentation-state={applyState.status}
+      data-motion={reducedMotion ? "reduced" : "full"}
+    >
+      <header className="cov-chalice-panel__header">
+        <div>
+          <h2 id={headingId}>Cursed Chalice Resolution</h2>
+          <p>Review a verified source repair before applying it.</p>
+        </div>
+        <div className="cov-chalice-panel__verdict" data-status={verdict}>
+          <StatusIcon status={verdict} />
+          <span>{verdict}</span>
+        </div>
+      </header>
+      <p className="cov-chalice-panel__truth">Repair availability does not change this verdict.</p>
+
+      {resolution.kind === "manual" ? (
+        <div className="cov-chalice-manual">
+          <TriangleAlert aria-hidden="true" size={22} />
+          <div><h3>Manual repair required</h3><p>{resolution.reason}</p></div>
+        </div>
+      ) : (
+        <>
+          {resolution.kind === "single" ? (
+            <p className="cov-chalice-safety"><TriangleAlert aria-hidden="true" size={18} /><span><strong>No second safe patch:</strong> {resolution.reason}</span></p>
+          ) : null}
+          <div className="cov-chalice-options">
+            {patches.map((patch) => {
+              const label = chaliceLabel(patch);
+              const selected = activePatch?.id === patch.id;
+              const rejected = selected && applyState.status === "REJECTED";
+              const applied = selected && applyState.status === "APPLIED";
+              const reviewing = selected && (applyState.status === "REVIEWING" || applyState.status === "APPLYING");
+              return (
+                <article className="cov-chalice-option" data-chalice-slot={patch.slot ?? "single"} data-selected={selected ? "true" : "false"} key={patch.id}>
+                  <header>
+                    <Wine aria-hidden="true" size={25} strokeWidth={1.7} />
+                    <div><h3>{label}</h3><p>{patch.strategy}</p></div>
+                  </header>
+                  <dl className="cov-chalice-meta">
+                    <div><dt>Target rules</dt><dd>{patch.targetRuleIds.join(", ")}</dd></div>
+                    <div><dt>Source revision</dt><dd>{patch.sourceRevision}</dd></div>
+                    <div><dt>Repair Core</dt><dd>{patch.repairCore.id}</dd></div>
+                  </dl>
+                  <PatchProofSummary proof={patch.proof} />
+                  <GuardedEdits patch={patch} reviewing={reviewing} reducedMotion={reducedMotion} />
+
+                  {reviewing ? (
+                    <motion.section
+                      className="cov-chalice-review"
+                      role="region"
+                      aria-label={`Review ${label} guarded edits`}
+                      variants={patchReviewVariants(reducedMotion)}
+                      initial="closed"
+                      animate="open"
+                    >
+                      <h4 ref={reviewHeadingRef} tabIndex={-1}>Review guarded edits</h4>
+                      <p>The expected source must match exactly. Applying this Chalice asks the application to patch and re-verify all properties.</p>
+                      <div className="cov-chalice-actions">
+                        <button type="button" disabled={applying} onClick={() => onApply(patch.id)}>Apply {label}</button>
+                        <button type="button" disabled={applying} onClick={onCancelReview}>Cancel review</button>
+                      </div>
+                      {applying ? <p ref={applyingStatusRef} className="cov-chalice-applying" role="status" tabIndex={-1}>Applying {label}. Re-verifying every applicable property…</p> : null}
+                    </motion.section>
+                  ) : rejected ? (
+                    <div className="cov-chalice-result cov-chalice-result--rejected" role="alert">
+                      <OctagonX aria-hidden="true" size={22} />
+                      <div>
+                        <h4 ref={rejectionHeadingRef} tabIndex={-1}>{label} was not applied</h4>
+                        <p><code>{applyState.reason}</code>: {PATCH_REJECTION_COPY[applyState.reason]}</p>
+                        <button type="button" onClick={() => onReview(patch.id)}>Review {label} again</button>
+                      </div>
+                    </div>
+                  ) : applied ? (
+                    <AppliedProof label={label} proof={applyState.proof} focusRef={appliedResultRef} />
+                  ) : (
+                    <button
+                      ref={(element) => {
+                        if (element === null) reviewButtonRefs.current.delete(patch.id);
+                        else reviewButtonRefs.current.set(patch.id, element);
+                      }}
+                      className="cov-chalice-review-action"
+                      type="button"
+                      disabled={applying || applyState.status === "APPLIED"}
+                      onClick={() => onReview(patch.id)}
+                    >
+                      Review {label}
+                    </button>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+          {"patchId" in applyState && activePatch === null ? (
+            <p className="cov-chalice-stale-selection" role="alert">The selected Chalice is no longer available for this source revision.</p>
+          ) : null}
+        </>
+      )}
+    </section>
+  );
+}
+
+export function CertificationSeal({ report }: CertificationSealProps): ReactElement {
+  const reducedMotion = useTribunalReducedMotion();
+  const certified = report.certifiable && report.verdicts.every((verdict) => verdict.status === "PASS");
+  const blocked = report.verdicts.filter((verdict) => verdict.status !== "PASS");
+
+  if (!certified) {
+    return (
+      <section className="cov-certification-blocked" aria-label="Certification status" role="status">
+        <TriangleAlert aria-hidden="true" size={22} />
+        <div>
+          <h2>Certification blocked</h2>
+          {blocked.length === 0 ? <p>The report is not certifiable.</p> : (
+            <ul>
+              {blocked.map((verdict) => (
+                <li key={verdict.inquisitor} data-status={verdict.status}>
+                  <StatusIcon status={verdict.status} />
+                  <span>{INQUISITOR_NAMES[verdict.inquisitor]}: {verdict.status}{verdict.unresolved.length === 0 ? "" : ` — ${verdict.unresolved.join(", ")}`}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <motion.section
+      className="cov-certification-seal"
+      role="status"
+      aria-live="polite"
+      aria-label={`Formally certified, revision ${report.revision}`}
+      data-motion={reducedMotion ? "reduced" : "full"}
+      variants={certificationSealVariants(reducedMotion)}
+      initial="unsealed"
+      animate="sealed"
+    >
+      <span className="cov-certification-seal__edge" aria-hidden="true" />
+      <ShieldCheck aria-hidden="true" size={30} strokeWidth={1.8} />
+      <strong>Formally certified</strong>
+      <span>COVENANT</span>
+      <small>Revision {report.revision}</small>
+    </motion.section>
+  );
+}
+
+function TelemetryRows({ rows }: { readonly rows: readonly TelemetryRow[] }): ReactElement {
+  return (
+    <dl className="cov-telemetry-rows">
+      {rows.map((row) => (
+        <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>
+      ))}
+    </dl>
+  );
+}
+
+function rowValue(rows: readonly TelemetryRow[], label: string): string {
+  return rows.find((row) => row.label === label)?.value ?? "Unavailable";
+}
+
+export function VerificationDrawer({ telemetry, pbt, open, onOpenChange }: VerificationDrawerProps): ReactElement {
+  const reducedMotion = useTribunalReducedMotion();
+  const componentId = useId();
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const liveHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const detailsId = `${componentId}-verification-details`;
+  const liveHeadingId = `${componentId}-live-heading`;
+  const pbtHeadingId = `${componentId}-pbt-heading`;
+  const latest = telemetry.at(-1);
+  const latestRows = latest === undefined ? [] : formatVerificationTelemetry(latest);
+  const ledger = latest === undefined
+    ? `No live solve · ${pbt.status === "VALID" ? `PBT ${pbt.snapshot.suiteVersion}` : "PBT unavailable"}`
+    : `${rowValue(latestRows, "Solver")} · ${rowValue(latestRows, "Solver latency")} · ${rowValue(latestRows, "Clauses checked")} clauses · ${pbt.status === "VALID" ? `PBT ${pbt.snapshot.suiteVersion}` : "PBT unavailable"}`;
+
+  useLayoutEffect(() => {
+    if (open) liveHeadingRef.current?.focus();
+  }, [open]);
+
+  function closeFromEscape(event: KeyboardEvent<HTMLElement>): void {
+    if (event.key !== "Escape") return;
+    event.preventDefault();
+    event.stopPropagation();
+    onOpenChange(false);
+    triggerRef.current?.focus();
+  }
+
+  return (
+    <aside
+      className="cov-verification-drawer"
+      data-open={open ? "true" : "false"}
+      data-motion={reducedMotion ? "reduced" : "full"}
+      onKeyDown={closeFromEscape}
+    >
+      <button
+        ref={triggerRef}
+        className="cov-verification-drawer__trigger"
+        type="button"
+        aria-expanded={open}
+        aria-controls={detailsId}
+        aria-label={open ? "Close verification details" : "Open verification details"}
+        onClick={() => onOpenChange(!open)}
+      >
+        <span data-testid="verification-ledger">{ledger}</span>
+        <ChevronDown aria-hidden="true" size={20} />
+      </button>
+      <motion.section
+        id={detailsId}
+        className="cov-verification-drawer__details"
+        role="region"
+        aria-label="Verification details"
+        aria-hidden={!open}
+        inert={!open}
+        variants={verificationDrawerVariants(reducedMotion)}
+        initial={false}
+        animate={open ? "open" : "closed"}
+      >
+        <section className="cov-verification-group" role="group" aria-labelledby={liveHeadingId}>
+            <h2 ref={liveHeadingRef} id={liveHeadingId} tabIndex={-1}>Live verification</h2>
+            <p>Measurements recorded by the current verification run.</p>
+            {telemetry.length === 0 ? <p>No live verification telemetry is available.</p> : (
+              <ol className="cov-live-solves">
+                {telemetry.map((solve, index) => (
+                  <li key={`${solve.solver}:${solve.elapsedMs}:${solve.clausesChecked}:${index}`}>
+                    <h3>Solve {index + 1}{index === telemetry.length - 1 ? " · Current" : ""}</h3>
+                    <TelemetryRows rows={formatVerificationTelemetry(solve)} />
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+          <section className="cov-verification-group" role="group" aria-labelledby={pbtHeadingId}>
+            <h2 id={pbtHeadingId}>Node property-test snapshot</h2>
+            {pbt.status === "VALID" ? (
+              <>
+                <p>Checked-in suite {pbt.snapshot.suiteVersion} ran in Node and was not executed in this browser.</p>
+                <div className="cov-pbt-properties">
+                  {pbt.snapshot.properties.map((property) => (
+                    <article key={property.property}>
+                      <TelemetryRows rows={formatOpenPBTStats(property)} />
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p>The browser did not run property tests.</p>
+                <p className="cov-pbt-invalid" role="alert"><TriangleAlert aria-hidden="true" size={18} />PBT snapshot unavailable: {pbt.reason}</p>
+              </>
+            )}
+          </section>
+        </motion.section>
+    </aside>
   );
 }
