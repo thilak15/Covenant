@@ -40,8 +40,8 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   _Requirements: 1.1–1.7, 2.1–2.7, 3.1–3.6, 4.1–4.6, 13.1, 13.3–13.6, 14.1, 14.4, 15.1–15.3, 15.7, 15.8, 16.3_
 
-- [ ] 8. Link the Split Scroll Inspector to the Phantom Witness Stand
-  Status: open
+- [x] 8. Link the Split Scroll Inspector to the Phantom Witness Stand
+  Status: resolved
 
   Blocked by: 7
 
@@ -58,13 +58,13 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   **Test seam to write first:** `packages/covenant-core/test/tribunal-ui/source-evidence-linkage.test.tsx`. Render `SplitScrollInspector` from a complete fixture report, select a Consistency finding, and assert exact source slicing, line and rule-ID gutters, core-only highlighting, bidirectional source/evidence links, hover/focus behavior without focus theft, clause activation, retained filter/selection after re-verification, and keyboard resizing bounded from 30% to 70% with reset.
 
-  - [ ] Render clause boundaries from `SourceLocation` rather than guessing from lines; preserve diagnostics and the original source when parsing is rejected.
-  - [ ] Link finding references to stable clause anchors and identify core membership only from `ConsistencyEvidence.core.ruleIds`.
-  - [ ] Provide non-color markers for core membership and additions, removals, and replacements.
-  - [ ] Implement editable source with a stable adjacent ID gutter and nearest-valid source-position restoration.
-  - [ ] Render witness assignments as a semantic exact-value table, followed by activated core IDs and incompatible triggered consequences.
-  - [ ] Produce deterministic plain-text copy evidence and expose clipboard denial recovery without converting rationals through `Number`.
-  - [ ] Stack panes below 1024px while retaining source-first DOM order and preventing page-level overflow at 320px.
+  - [x] Render clause boundaries from `SourceLocation` rather than guessing from lines; preserve diagnostics and the original source when parsing is rejected.
+  - [x] Link finding references to stable clause anchors and identify core membership only from `ConsistencyEvidence.core.ruleIds`.
+  - [x] Provide non-color markers for core membership and additions, removals, and replacements.
+  - [x] Implement editable source with a stable adjacent ID gutter and nearest-valid source-position restoration.
+  - [x] Render witness assignments as a semantic exact-value table, followed by activated core IDs and incompatible triggered consequences.
+  - [x] Produce deterministic plain-text copy evidence and expose clipboard denial recovery without converting rationals through `Number`.
+  - [x] Stack panes below 1024px while retaining source-first DOM order and preventing page-level overflow at 320px.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/tribunal-ui/source-evidence-linkage.test.tsx test/tribunal-ui/phantom-witness-stand.test.tsx && pnpm --filter @covenant/core build && pnpm typecheck`
 
