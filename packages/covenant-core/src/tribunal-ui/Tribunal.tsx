@@ -4,18 +4,18 @@ import {
   ChevronDown,
   CircleCheckBig,
   CircleHelp,
-  CircleUserRound,
   Clipboard,
   FileMinus2,
   FilePlus2,
   Link as LinkIcon,
   ListFilter,
   OctagonX,
+  PencilLine,
   RefreshCcw,
   Replace,
+  ScrollText,
   ShieldCheck,
   TriangleAlert,
-  Wine,
 } from "lucide-react";
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent, PointerEvent as ReactPointerEvent, ReactElement, RefObject } from "react";
@@ -68,6 +68,57 @@ const INQUISITOR_NAMES = {
 } as const satisfies Readonly<Record<Inquisitor, string>>;
 
 type LanternStyle = MotionStyle & { readonly "--cov-lantern-delay": string };
+
+function HoodedInquisitorIcon(): ReactElement {
+  return (
+    <svg className="cov-inquisitor-tab__hood" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <path className="cov-hooded-icon__cowl" d="M16 2.2c-5.8 0-10.4 5.7-10.4 12.7 0 2.7.6 5.1 1.8 7.1L3.2 29.8h25.6L24.6 22c1.2-2 1.8-4.4 1.8-7.1C26.4 7.9 21.8 2.2 16 2.2Z" />
+      <path className="cov-hooded-icon__fold" d="M7.4 22c2.4-1.9 5.2-2.9 8.6-2.9s6.2 1 8.6 2.9l-2.8 7.8H10.2L7.4 22Z" />
+      <path className="cov-hooded-icon__shadow" d="M10.2 14.4c.4-4.1 2.5-7 5.8-7s5.4 2.9 5.8 7c-1.7 2.1-3.6 3.1-5.8 3.1s-4.1-1-5.8-3.1Z" />
+      <path className="cov-hooded-icon__brow" d="M12.4 13.3c2.4-1.1 4.8-1.1 7.2 0" />
+    </svg>
+  );
+}
+
+function WroughtLanternIcon({ status }: { readonly status: VerdictStatus }): ReactElement {
+  const gradientId = `cov-lantern-${useId().replaceAll(":", "")}`;
+  return (
+    <svg className="cov-inquisitor-tab__lantern" data-status={status} viewBox="0 0 36 42" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id={gradientId} cx="50%" cy="52%" r="50%">
+          <stop offset="0" stopColor="currentColor" stopOpacity="0.95" />
+          <stop offset="0.42" stopColor="currentColor" stopOpacity="0.42" />
+          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle className="cov-lantern-svg__glow" cx="18" cy="23" r="15" fill={`url(#${gradientId})`} />
+      <path className="cov-lantern-svg__iron" d="M13 7c0-3 2-5 5-5s5 2 5 5M10 9h16M8 13l3-4h14l3 4v20H8V13Zm3 20-3 5m17-5 3 5M11 38h14" />
+      <path className="cov-lantern-svg__frame" d="M12 14h12l-1.4 15h-9.2L12 14Zm6 0v15" />
+      <circle className="cov-lantern-svg__flame" cx="18" cy="23" r="4.2" />
+    </svg>
+  );
+}
+
+function GothicGobletIcon(): ReactElement {
+  return (
+    <svg className="cov-gothic-goblet" viewBox="0 0 36 42" aria-hidden="true" focusable="false">
+      <path d="M7 3h22l-1.4 11.2C27 20.1 23.5 24 18 24s-9-3.9-9.6-9.8L7 3Z" />
+      <path d="M10 7c2.6 1.8 5.3 2.7 8 2.7S23.4 8.8 26 7M18 24v10m-7 5h14M14 34h8l3 5H11l3-5Z" />
+      <path d="M6.5 7.5 3 11l4 3m22.5-6.5L33 11l-4 3M12.2 13.2l2.2 2.1 3.6-4 3.6 4 2.2-2.1" />
+    </svg>
+  );
+}
+
+function WaxSealMedallionIcon(): ReactElement {
+  return (
+    <svg className="cov-certification-seal__medallion" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <path d="M50 2.5c4.3 0 7.3 5.2 11.2 6.1 4.1.9 9-2.5 12.6-.5 3.7 2.1 3.5 8.1 6.5 10.9 3 2.9 9 2.4 11.1 6.1 2 3.6-1.5 8.5-.6 12.6.9 4 6.2 7 6.2 11.3s-5.3 7.3-6.2 11.3c-.9 4.1 2.6 9 .6 12.6-2.1 3.7-8.1 3.2-11.1 6.1-3 2.8-2.8 8.8-6.5 10.9-3.6 2-8.5-1.4-12.6-.5-3.9.9-6.9 6.1-11.2 6.1s-7.3-5.2-11.2-6.1c-4.1-.9-9 2.5-12.6.5-3.7-2.1-3.5-8.1-6.5-10.9-3-2.9-9-2.4-11.1-6.1-2-3.6 1.5-8.5.6-12.6-.9-4-6.2-7-6.2-11.3s5.3-7.3 6.2-11.3c.9-4.1-2.6-9-.6-12.6 2.1-3.7 8.1-3.2 11.1-6.1 3-2.8 2.8-8.8 6.5-10.9 3.6-2 8.5 1.4 12.6.5 3.9-.9 6.9-6.1 11.2-6.1Z" />
+      <circle cx="50" cy="50" r="36.5" />
+      <circle cx="50" cy="50" r="30" />
+      <path className="cov-certification-seal__sigil" d="M39 39.5c2.7-4.1 6.3-6.1 10.8-6.1 6.4 0 10.9 4 12.2 10.1h-6.2c-1-2.9-3-4.3-6-4.3-4.7 0-7.4 4-7.4 10.7s2.7 10.8 7.4 10.8c3 0 5-1.5 6-4.4H62c-1.3 6.2-5.8 10.2-12.2 10.2-4.5 0-8.1-2-10.8-6.1" />
+    </svg>
+  );
+}
 
 function StatusIcon({ status }: { readonly status: VerdictStatus }): ReactElement {
   const shared = { "aria-hidden": true, "data-testid": `status-icon-${status}`, size: 18, strokeWidth: 2.25 } as const;
@@ -204,7 +255,7 @@ export function InquisitorLanternBar({
                 onFocus={() => setFocusIndex(index)}
                 onKeyDown={(event) => handleKeyDown(event, index)}
               >
-                <CircleUserRound className="cov-inquisitor-tab__hood" aria-hidden="true" size={22} strokeWidth={1.6} />
+                <HoodedInquisitorIcon />
                 <span className="cov-inquisitor-tab__copy">
                   <span className="cov-inquisitor-tab__name" data-testid="inquisitor-name">{name}</span>
                   <span className="cov-inquisitor-tab__finding-count">{count} {count === 1 ? "finding" : "findings"}</span>
@@ -212,12 +263,11 @@ export function InquisitorLanternBar({
                 <span className="cov-inquisitor-tab__verdict">
                   <StatusIcon status={verdict.status} />
                   <span data-testid="verdict-word">{verdict.status}</span>
-                  <span className="cov-inquisitor-tab__lantern" aria-hidden="true">
-                    <motion.span
-                      className="cov-inquisitor-tab__lantern-flare"
-                      variants={lanternFlareVariants(reducedMotion)}
-                    />
-                  </span>
+                  <WroughtLanternIcon status={verdict.status} />
+                  <motion.span
+                    className="cov-inquisitor-tab__lantern-flare"
+                    variants={lanternFlareVariants(reducedMotion)}
+                  />
                 </span>
               </button>
             </motion.li>
@@ -318,6 +368,7 @@ export function SplitScrollInspector({
   focusedRuleId,
   editable,
   changeMarkers = [],
+  onEditableChange,
   onSourceChange,
   onSelectFinding,
   onClearFinding,
@@ -500,7 +551,15 @@ export function SplitScrollInspector({
         <div>
           <h2>Split Scroll Inspector</h2>
         </div>
-        <p data-testid="active-filter">{visibleInquisitor === "ALL" ? "All findings" : `${INQUISITOR_NAMES[visibleInquisitor]} findings`}</p>
+        <div className="cov-split-scroll__controls">
+          <p data-testid="active-filter">{visibleInquisitor === "ALL" ? "All findings" : `${INQUISITOR_NAMES[visibleInquisitor]} findings`}</p>
+          {onEditableChange === undefined ? null : (
+            <button type="button" aria-pressed={editable} onClick={() => onEditableChange(!editable)}>
+              {editable ? <ScrollText aria-hidden="true" size={17} /> : <PencilLine aria-hidden="true" size={17} />}
+              {editable ? "Read source" : "Edit source"}
+            </button>
+          )}
+        </div>
       </header>
       <div className="cov-split-scroll__panes">
         <section className="cov-source-pane" aria-label="Authoritative source">
@@ -982,7 +1041,7 @@ export function ChaliceResolutionPanel({
               return (
                 <article className="cov-chalice-option" data-chalice-slot={patch.slot ?? "single"} data-selected={selected ? "true" : "false"} key={patch.id}>
                   <header>
-                    <Wine aria-hidden="true" size={25} strokeWidth={1.7} />
+                    <GothicGobletIcon />
                     <div><h3>{label}</h3><p>{patch.strategy}</p></div>
                   </header>
                   <dl className="cov-chalice-meta">
@@ -1085,11 +1144,12 @@ export function CertificationSeal({ report }: CertificationSealProps): ReactElem
       initial="unsealed"
       animate="sealed"
     >
-      <span className="cov-certification-seal__edge" aria-hidden="true" />
-      <ShieldCheck aria-hidden="true" size={30} strokeWidth={1.8} />
-      <strong>Formally certified</strong>
-      <span>COVENANT</span>
-      <small>Revision {report.revision}</small>
+      <WaxSealMedallionIcon />
+      <div className="cov-certification-seal__impression">
+        <strong>Formally certified</strong>
+        <span>COVENANT</span>
+        <small>Revision {report.revision}</small>
+      </div>
     </motion.section>
   );
 }

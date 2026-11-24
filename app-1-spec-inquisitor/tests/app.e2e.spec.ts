@@ -28,8 +28,10 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function openSample(page: import("@playwright/test").Page, title: string, finding: string): Promise<void> {
-  await page.getByRole("button", { name: title, exact: false }).click();
-  await expect(page.getByRole("textbox", { name: "Authoritative source text" })).toBeVisible();
+  const sample = page.getByRole("button", { name: title, exact: false });
+  await sample.click();
+  await expect(sample).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Edit source" })).toBeVisible();
   await expect(page.getByRole("button", { name: new RegExp(finding, "i") })).toBeVisible();
 }
 

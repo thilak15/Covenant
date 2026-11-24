@@ -29,7 +29,7 @@ import type {
   VariableDeclaration,
   VerificationReport,
 } from "@covenant/core";
-import { useEffect, useLayoutEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { pbtDownload, requirementsDownload } from "./exports.js";
 import {
@@ -142,6 +142,7 @@ export function App(): ReactElement {
   );
   const operationSequence = useRef(0);
   const editRevision = useRef(0);
+  const [sourceEditable, setSourceEditable] = useState(false);
   const activeSample = sampleById(state.sampleId);
 
   useLayoutEffect(() => {
@@ -182,6 +183,7 @@ export function App(): ReactElement {
   function chooseSample(sample: CursedSampleScroll): void {
     if (sample.id === state.sampleId) return;
     operationSequence.current += 1;
+    setSourceEditable(false);
     dispatch({ type: "LOAD_SAMPLE", sampleId: sample.id, source: sample.document.source, schemaText: schemaFor(sample) });
   }
 
@@ -293,9 +295,13 @@ export function App(): ReactElement {
         </header>
 
         <section className="app-scroll-selector" aria-labelledby="scroll-selector-title">
-          <div>
+          <div className="app-scroll-selector__intro">
             <h2 id="scroll-selector-title">Cursed Sample Scrolls</h2>
             <p>Load a pre-verified formal AST with one click.</p>
+            <div className="app-verify-state" data-phase={state.phase} role="status">
+              <span className="app-phosphor-trace" aria-hidden="true" />
+              <strong>{state.phase === "READY" ? "Verification resolved" : state.phase === "REJECTED" ? "Parser rejected" : state.phase === "FAILED" ? "Verification failed" : "Verification in progress"}</strong>
+            </div>
           </div>
           <div className="app-scroll-selector__options">
             {SPEC_INQUISITOR_SAMPLES.map((sample) => (
@@ -309,17 +315,6 @@ export function App(): ReactElement {
                 <span>{sample.summary}</span>
               </button>
             ))}
-          </div>
-        </section>
-
-        <section className="app-document-heading" aria-live="polite">
-          <div>
-            <h2>{activeSample.title}</h2>
-            <p>{activeSample.summary}</p>
-          </div>
-          <div className="app-verify-state" data-phase={state.phase} role="status">
-            <span className="app-phosphor-trace" aria-hidden="true" />
-            <strong>{state.phase === "READY" ? "Verification resolved" : state.phase === "REJECTED" ? "Parser rejected" : state.phase === "FAILED" ? "Verification failed" : "Verification in progress"}</strong>
           </div>
         </section>
 
@@ -349,7 +344,8 @@ export function App(): ReactElement {
               visibleInquisitor={state.filter}
               selection={state.selection}
               focusedRuleId={state.focusedRuleId}
-              editable
+              editable={sourceEditable}
+              onEditableChange={setSourceEditable}
               onSourceChange={changeSource}
               onSelectFinding={(selection) => dispatch({ type: "SELECT_FINDING", selection })}
               onClearFinding={() => dispatch({ type: "SELECT_FINDING", selection: null })}

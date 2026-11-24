@@ -14,6 +14,15 @@ import type { PreparedSample } from "./samples.js";
 
 export type VerificationPhase = "LOADING" | "VERIFYING" | "READY" | "REJECTED" | "FAILED";
 
+function primaryFindingSelection(report: VerificationReport): FindingSelection | null {
+  for (const verdict of report.verdicts) {
+    if (verdict.status !== "FAIL") continue;
+    const finding = verdict.findings[0];
+    if (finding !== undefined) return { inquisitor: verdict.inquisitor, findingId: finding.id };
+  }
+  return null;
+}
+
 export interface ExportContext {
   readonly before: CovenantDocument;
   readonly findingId: string;
@@ -101,6 +110,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         report: action.prepared.report,
         preparedSample: action.prepared,
         diagnostics: [],
+        selection: primaryFindingSelection(action.prepared.report),
         failure: null,
       };
     case "VERIFY_SOURCE":

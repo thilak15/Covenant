@@ -162,7 +162,7 @@ describe("Tribunal resilient states", () => {
         onOpenChange={vi.fn()}
       />,
     );
-    expect(screen.getByText("2 ms")).toBeVisible();
+    expect(screen.getByText("2.00 ms")).toBeVisible();
     expect(screen.getByText("5")).toBeVisible();
     expect(screen.getByRole("alert")).toHaveTextContent("Checked-in snapshot failed validation.");
     expect(screen.getByText(/browser did not run property tests/iu)).toBeVisible();

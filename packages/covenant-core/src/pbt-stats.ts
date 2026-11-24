@@ -164,7 +164,7 @@ const SOLVER_LABELS: Readonly<Record<VerificationTelemetry["solver"], string>> =
 export function formatVerificationTelemetry(telemetry: VerificationTelemetry): readonly TelemetryRow[] {
   return [
     { label: "Solver", value: SOLVER_LABELS[telemetry.solver] },
-    { label: "Solver latency", value: `${telemetry.elapsedMs} ms` },
+    { label: "Solver latency", value: `${telemetry.elapsedMs.toFixed(2)} ms` },
     { label: "Clauses checked", value: String(telemetry.clausesChecked) },
   ];
 }

@@ -100,6 +100,10 @@ describe("OpenPBTStats snapshot", () => {
       { label: "Solver latency", value: "1.25 ms" },
       { label: "Clauses checked", value: "17" },
     ]);
+    expect(formatVerificationTelemetry({ ...liveTelemetry, elapsedMs: 0.09999990463256836 })[1]).toEqual({
+      label: "Solver latency",
+      value: "0.10 ms",
+    });
     expect(openPBTStatsSnapshot).toEqual(before);
 
     const serializedRows = JSON.stringify(formatVerificationTelemetry(liveTelemetry));

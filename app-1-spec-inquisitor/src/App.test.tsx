@@ -58,7 +58,8 @@ afterEach(() => cleanup());
 
 async function selectSample(user: ReturnType<typeof userEvent.setup>, title: string): Promise<HTMLTextAreaElement> {
   await user.click(screen.getByRole("button", { name: new RegExp(title, "i") }));
-  await screen.findByRole("heading", { name: title });
+  const toggle = await screen.findByRole("button", { name: /^(Edit|Read) source$/i });
+  if (toggle.textContent?.match(/^Edit source$/i) !== null) await user.click(toggle);
   return await screen.findByRole("textbox", { name: "Authoritative source text" }) as HTMLTextAreaElement;
 }
 

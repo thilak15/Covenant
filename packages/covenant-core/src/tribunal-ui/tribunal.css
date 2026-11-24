@@ -51,6 +51,7 @@
   --cov-app2-mahogany: #321719;
   --cov-app2-wax: #a51f32;
   --cov-scrim: rgba(9, 12, 14, 0.78);
+  --cov-candlelight: rgba(182, 147, 85, 0.09);
 
   --cov-font-app1-display: Alegreya, Iowan Old Style, Georgia, serif;
   --cov-font-app2-display: Bodoni Moda, Didot, Times New Roman, serif;
@@ -137,7 +138,9 @@
   box-sizing: border-box;
   min-width: 0;
   color: var(--cov-shell-text);
-  background: var(--cov-shell-background);
+  background-color: var(--cov-shell-background);
+  background-image: radial-gradient(ellipse 82% 54% at 50% -12%, var(--cov-candlelight), transparent 66%);
+  background-attachment: fixed;
   font-family: var(--cov-shell-font);
   font-size: var(--cov-size-body);
   font-weight: var(--cov-weight-body);
@@ -155,11 +158,13 @@
 [data-tribunal-skin="spec-inquisitor"] {
   --cov-font-display: var(--cov-font-app1-display);
   --cov-skin-well: var(--cov-obsidian-900);
+  --cov-candlelight: rgba(182, 147, 85, 0.08);
 }
 
 [data-tribunal-skin="clause-exorcist"] {
   --cov-font-display: var(--cov-font-app2-display);
   --cov-skin-well: var(--cov-app2-mahogany);
+  --cov-candlelight: rgba(205, 179, 122, 0.11);
 }
 
 [data-tribunal-skin] ::selection {
@@ -306,7 +311,29 @@
 .cov-inquisitor-tab__hood {
   grid-area: hood;
   align-self: center;
+  width: 24px;
+  height: 24px;
   color: var(--cov-tarnished-brass);
+  overflow: visible;
+}
+
+.cov-hooded-icon__cowl {
+  fill: currentColor;
+}
+
+.cov-hooded-icon__fold {
+  fill: var(--cov-dark-brass);
+}
+
+.cov-hooded-icon__shadow {
+  fill: var(--cov-obsidian-950);
+}
+
+.cov-hooded-icon__brow {
+  fill: none;
+  stroke: var(--cov-vellum-300);
+  stroke-linecap: round;
+  stroke-width: 1.15;
 }
 
 .cov-inquisitor-tab__copy {
@@ -331,6 +358,7 @@
 }
 
 .cov-inquisitor-tab__verdict {
+  position: relative;
   display: flex;
   grid-area: verdict;
   align-items: center;
@@ -343,19 +371,45 @@
 }
 
 .cov-inquisitor-tab__lantern {
-  position: relative;
   display: block;
-  width: var(--cov-lantern-size);
-  height: var(--cov-lantern-size);
+  width: 28px;
+  height: 32px;
   margin-left: auto;
-  border: 2px solid currentColor;
-  border-radius: var(--cov-lantern-radius);
-  background: var(--cov-obsidian-950);
+  overflow: visible;
+}
+
+.cov-lantern-svg__iron,
+.cov-lantern-svg__frame {
+  fill: none;
+  stroke: var(--cov-tarnished-brass);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cov-lantern-svg__iron {
+  stroke-width: 1.7;
+}
+
+.cov-lantern-svg__frame {
+  stroke-width: 1.15;
+  opacity: 0.82;
+}
+
+.cov-lantern-svg__glow {
+  opacity: 0.72;
+}
+
+.cov-lantern-svg__flame {
+  fill: currentColor;
+  filter: drop-shadow(0 0 4px currentColor);
 }
 
 .cov-inquisitor-tab__lantern-flare {
   position: absolute;
-  inset: -3px;
+  right: 0;
+  bottom: 1px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--cov-lantern-radius);
   box-shadow: var(--cov-shadow-lantern-flare);
   opacity: 0;
@@ -366,28 +420,16 @@
   color: var(--cov-pass);
 }
 
-.cov-inquisitor-tab[data-status="PASS"] .cov-inquisitor-tab__lantern {
-  background: var(--cov-lantern-pass-background);
-}
-
 .cov-inquisitor-tab[data-status="FAIL"] .cov-inquisitor-tab__verdict {
   color: var(--cov-fail);
-}
-
-.cov-inquisitor-tab[data-status="FAIL"] .cov-inquisitor-tab__lantern {
-  background: var(--cov-lantern-fail-background);
 }
 
 .cov-inquisitor-tab[data-status="UNKNOWN"] .cov-inquisitor-tab__verdict {
   color: var(--cov-unknown);
 }
 
-.cov-inquisitor-tab[data-status="UNKNOWN"] .cov-inquisitor-tab__lantern {
-  background: var(--cov-lantern-unknown-background);
-}
-
 .cov-inquisitor-tab[aria-selected="true"] .cov-inquisitor-tab__lantern {
-  box-shadow: var(--cov-shadow-lantern-flare);
+  filter: drop-shadow(0 0 7px currentColor);
 }
 
 .cov-split-scroll,
@@ -418,12 +460,41 @@
   line-height: var(--cov-leading-headline);
 }
 
+.cov-split-scroll__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--cov-space-sm) var(--cov-space-md);
+  min-width: 0;
+}
+
 .cov-split-scroll__header p {
   max-width: 28ch;
   margin: 0;
   color: var(--cov-vellum-300);
   font: var(--cov-weight-label) var(--cov-size-label) / var(--cov-leading-label) var(--cov-font-label);
   text-align: right;
+}
+
+.cov-split-scroll__controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cov-space-sm);
+  min-height: 44px;
+  padding: var(--cov-space-sm) 12px;
+  border: var(--cov-space-hairline) solid var(--cov-tarnished-brass);
+  border-radius: var(--cov-radius-control);
+  color: var(--cov-obsidian-950);
+  background: var(--cov-tarnished-brass);
+  font: var(--cov-weight-label) var(--cov-size-label) / var(--cov-leading-label) var(--cov-font-label);
+  cursor: pointer;
+}
+
+.cov-split-scroll__controls button[aria-pressed="true"] {
+  color: var(--cov-vellum-50);
+  background: transparent;
 }
 
 .cov-split-scroll__panes {
@@ -441,9 +512,34 @@
 }
 
 .cov-source-pane {
+  position: relative;
   color: var(--cov-vellum-ink);
   background: var(--cov-vellum-50);
   box-shadow: var(--cov-shadow-vellum-lift);
+}
+
+.cov-source-pane::before,
+.cov-source-pane::after {
+  position: absolute;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  content: "";
+}
+
+.cov-source-pane::before {
+  top: 7px;
+  left: 7px;
+  border-top: 2px double var(--cov-tarnished-brass);
+  border-left: 2px double var(--cov-tarnished-brass);
+}
+
+.cov-source-pane::after {
+  right: 7px;
+  bottom: 7px;
+  border-right: 2px double var(--cov-tarnished-brass);
+  border-bottom: 2px double var(--cov-tarnished-brass);
 }
 
 .cov-source-pane__meta {
@@ -1005,6 +1101,25 @@
   color: var(--cov-dark-brass);
 }
 
+.cov-gothic-goblet {
+  width: 30px;
+  height: 35px;
+  overflow: visible;
+}
+
+.cov-gothic-goblet path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.45;
+}
+
+.cov-gothic-goblet path:first-child {
+  fill: color-mix(in srgb, var(--cov-tarnished-brass) 14%, transparent);
+  stroke-width: 1.8;
+}
+
 .cov-chalice-option h3,
 .cov-chalice-option h4,
 .cov-chalice-manual h3 {
@@ -1285,27 +1400,56 @@
   position: relative;
   display: grid;
   place-items: center;
-  align-content: center;
-  gap: 3px;
-  width: min(224px, 74vw);
+  width: min(236px, 76vw);
   aspect-ratio: 1;
-  padding: var(--cov-space-lg);
-  border: 5px double var(--cov-vellum-100);
-  border-radius: 46% 54% 49% 51% / 52% 45% 55% 48%;
+  padding: 42px;
   color: var(--cov-vellum-50);
-  background: var(--cov-app2-wax);
-  box-shadow: var(--cov-shadow-seal-contact);
+  filter: drop-shadow(0 8px 1px rgba(72, 8, 18, 0.48)) drop-shadow(0 16px 22px rgba(0, 0, 0, 0.3));
   text-align: center;
   isolation: isolate;
 }
 
-.cov-certification-seal__edge {
+.cov-certification-seal__medallion {
   position: absolute;
-  inset: 8px;
+  inset: 0;
   z-index: -1;
-  border: 2px dotted var(--cov-vellum-100);
-  border-radius: 51% 49% 55% 45% / 47% 54% 46% 53%;
-  opacity: 0.7;
+  width: 100%;
+  height: 100%;
+  color: var(--cov-app2-wax);
+  overflow: visible;
+}
+
+.cov-certification-seal__medallion > path:first-child {
+  fill: currentColor;
+  stroke: var(--cov-blood-deep);
+  stroke-width: 1.25;
+}
+
+.cov-certification-seal__medallion circle {
+  fill: none;
+  stroke: var(--cov-vellum-100);
+  stroke-width: 1.1;
+  opacity: 0.72;
+}
+
+.cov-certification-seal__medallion circle + circle {
+  stroke-dasharray: 1.4 3.4;
+  stroke-width: 1.6;
+}
+
+.cov-certification-seal__sigil {
+  fill: none;
+  stroke: var(--cov-vellum-100);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.1;
+  opacity: 0.2;
+}
+
+.cov-certification-seal__impression {
+  display: grid;
+  place-items: center;
+  gap: 4px;
 }
 
 .cov-certification-seal strong {
@@ -1315,7 +1459,7 @@
   line-height: 1;
 }
 
-.cov-certification-seal > span:not(.cov-certification-seal__edge) {
+.cov-certification-seal__impression > span {
   font: var(--cov-weight-label) 0.7rem / var(--cov-leading-label) var(--cov-font-label);
   letter-spacing: 0.18em;
 }
@@ -1344,6 +1488,9 @@
 }
 
 .cov-verification-drawer[data-open="false"] .cov-verification-drawer__details {
+  padding-block: 0;
+  border-top: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -1448,16 +1595,19 @@
 @media print {
   .cov-certification-seal {
     color: #000;
-    background: #fff;
-    border: 4px double #000;
-    box-shadow: none;
+    filter: none;
     transform: none !important;
     opacity: 1 !important;
     break-inside: avoid;
   }
 
-  .cov-certification-seal__edge {
-    border-color: #000;
+  .cov-certification-seal__medallion {
+    color: #fff;
+  }
+  .cov-certification-seal__medallion > path:first-child,
+  .cov-certification-seal__medallion circle,
+  .cov-certification-seal__sigil {
+    stroke: #000;
   }
 
   .cov-certification-blocked,
@@ -1544,6 +1694,12 @@
   .cov-split-scroll__header p {
     max-width: none;
     text-align: left;
+  }
+  .cov-split-scroll__controls {
+    justify-content: flex-start;
+  }
+  .cov-split-scroll__controls button {
+    width: 100%;
   }
 
   .cov-source-clauses > li {

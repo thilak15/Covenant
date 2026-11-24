@@ -67,6 +67,7 @@ export interface SplitScrollInspectorProps {
   readonly focusedRuleId: RuleId | null;
   readonly editable: boolean;
   readonly changeMarkers?: readonly SourceChangeMarker[];
+  readonly onEditableChange?: (editable: boolean) => void;
   readonly onSourceChange?: (text: string) => void;
   readonly onSelectFinding: (selection: FindingSelection) => void;
   readonly onClearFinding: () => void;

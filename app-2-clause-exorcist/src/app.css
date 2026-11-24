@@ -113,7 +113,6 @@ a {
 }
 
 .app-masthead h1,
-.app-document-heading h2,
 .app-scroll-selector h2,
 .app-export-bench h2,
 .app-evidence-ledger h2,
@@ -132,7 +131,6 @@ a {
 }
 
 .app-masthead p,
-.app-document-heading p,
 .app-scroll-selector p,
 .app-export-bench p,
 .app-loading p,
@@ -165,10 +163,16 @@ a {
 
 .app-scroll-selector {
   display: grid;
-  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 3fr);
-  gap: 28px;
-  align-items: center;
-  padding: 28px 0;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 3.2fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: 22px 0;
+}
+
+.app-scroll-selector__intro {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .app-scroll-selector h2,
@@ -190,8 +194,8 @@ a {
   display: grid;
   align-content: start;
   gap: 8px;
-  min-height: 112px;
-  padding: 16px;
+  min-height: 100px;
+  padding: 14px 16px;
   border: 1px solid #74552e;
   border-radius: 3px 14px 3px 3px;
   color: #f5e9cb;
@@ -224,36 +228,13 @@ a {
   line-height: 1.45;
 }
 
-.app-document-heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 8px 0 18px;
-  border-top: 1px solid #321719;
-}
-
-.app-marginal-kicker {
-  margin: 0 0 6px;
-  color: #a51f32;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.app-document-heading h2 {
-  max-width: 28ch;
-  font-size: clamp(1.9rem, 3vw, 3.2rem);
-  line-height: 0.98;
-  text-wrap: balance;
-}
-
 .app-verify-state {
   display: grid;
   gap: 8px;
-  min-width: min(100%, 280px);
-  padding: 12px 14px;
+  width: 100%;
+  min-width: 0;
+  margin-top: auto;
+  padding: 10px 12px;
   border: 1px solid #a51f32;
   border-radius: 3px;
   color: #f5e9cb;
@@ -390,9 +371,10 @@ a {
 
 .app-export-bench {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.9fr);
   gap: 24px;
   align-items: center;
+  min-width: 0;
   padding: 24px;
   border: 1px solid #a51f32;
   border-radius: 3px 18px 3px 3px;
@@ -405,17 +387,27 @@ a {
   flex-wrap: wrap;
   justify-content: end;
   gap: 8px;
+  min-width: 0;
+  width: 100%;
 }
 
 .app-export-actions a,
 .app-export-actions p {
+  min-width: 0;
   margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.app-export-actions p {
+  flex: 1 1 100%;
 }
 
 .app-export-actions a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 1 1 220px;
+  min-width: 0;
   min-height: 44px;
   padding: 10px 14px;
   border: 1px solid #a51f32;
@@ -424,7 +416,9 @@ a {
   background: #a51f32;
   font-size: 0.78rem;
   font-weight: 700;
+  text-align: center;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .app-export-actions a:last-child {
@@ -442,11 +436,6 @@ a {
 
   .app-offline-ledger {
     display: none;
-  }
-
-  .app-document-heading {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .app-export-actions {
@@ -480,8 +469,9 @@ a {
     display: grid;
   }
 
-  .app-verify-state {
-    min-width: 0;
+  .app-export-actions a {
+    flex-basis: 100%;
+    width: 100%;
   }
 }
 

@@ -98,8 +98,7 @@ a {
   border-left: 1px solid #273137;
 }
 
-.app-masthead h1,
-.app-document-heading h2 {
+.app-masthead h1 {
   margin: 0;
   color: #f5e9cb;
   font-family: Alegreya, "Iowan Old Style", Georgia, serif;
@@ -113,7 +112,6 @@ a {
 }
 
 .app-masthead p,
-.app-document-heading p,
 .app-scroll-selector p,
 .app-export-bench p {
   max-width: 72ch;
@@ -143,10 +141,16 @@ a {
 
 .app-scroll-selector {
   display: grid;
-  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 3.2fr);
-  gap: 24px;
-  align-items: center;
-  padding: 24px 0;
+  grid-template-columns: minmax(210px, 0.75fr) minmax(0, 3.25fr);
+  gap: 20px;
+  align-items: stretch;
+  padding: 20px 0;
+}
+
+.app-scroll-selector__intro {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .app-scroll-selector h2,
@@ -170,7 +174,7 @@ a {
   display: grid;
   align-content: start;
   gap: 6px;
-  min-height: 92px;
+  min-height: 88px;
   padding: 13px 14px;
   border: 1px solid #273137;
   border-radius: 3px;
@@ -205,28 +209,14 @@ a {
   line-height: 1.4;
 }
 
-.app-document-heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 24px 0 16px;
-  border-top: 1px solid #273137;
-}
-
-.app-document-heading h2 {
-  max-width: 24ch;
-  font-size: clamp(1.75rem, 3vw, 3rem);
-  line-height: 1;
-  text-wrap: balance;
-}
-
 .app-verify-state {
   position: relative;
   display: grid;
   gap: 7px;
-  min-width: min(100%, 280px);
-  padding: 12px 14px;
+  width: 100%;
+  min-width: 0;
+  margin-top: auto;
+  padding: 10px 12px;
   border: 1px solid #21463d;
   border-radius: 3px;
   overflow: hidden;
@@ -381,9 +371,10 @@ a {
 
 .app-export-bench {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.9fr);
   gap: 24px;
   align-items: center;
+  min-width: 0;
   padding: 24px;
   border: 1px solid #74552e;
   border-radius: 6px;
@@ -395,12 +386,16 @@ a {
   flex-wrap: wrap;
   justify-content: end;
   gap: 8px;
+  min-width: 0;
+  width: 100%;
 }
 
 .app-export-actions a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 1 1 220px;
+  min-width: 0;
   min-height: 44px;
   padding: 10px 14px;
   border: 1px solid #b69355;
@@ -409,7 +404,9 @@ a {
   background: #b69355;
   font-size: 0.78rem;
   font-weight: 700;
+  text-align: center;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .app-export-actions a:last-child {
@@ -428,11 +425,6 @@ a {
 
   .app-scroll-selector {
     grid-template-columns: 1fr;
-  }
-
-  .app-document-heading {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .app-evidence-ledger,
@@ -474,12 +466,9 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .app-document-heading {
-    padding-top: 20px;
-  }
-
-  .app-verify-state {
-    min-width: 0;
+  .app-export-actions a {
+    flex-basis: 100%;
+    width: 100%;
   }
 
   .app-evidence-ledger dl {
