@@ -44,8 +44,8 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   _Requirements: 1.1, 1.2, 16.1, 16.3, 16.4, 16.6, 16.7_
 
-- [ ] 2. Parse deterministic offline rules into the strict deontic AST
-  Status: open
+- [x] 2. Parse deterministic offline rules into the strict deontic AST
+  Status: resolved
 
   Blocked by: 1
 
@@ -63,12 +63,12 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   **Test seam to write first:** `packages/covenant-core/test/parser.test.ts`. Drive `parseOffline(input: unknown)` through the public root entry with one supported EARS document, one supported structured legal clause, one malformed clause, and one syntactically valid unsupported-theory clause; assert stable IDs, UTF-16 source spans, exact reduced rationals, diagnostics, and byte-identical repeated parse output.
 
-  - [ ] Define readonly `CovenantDocument`, `Rule`, `RuleScope`, activation `Condition`, `DeonticModality`, solver evidence, verdict, repair, and telemetry contracts without `any`.
-  - [ ] Parse decimal source literals directly into reduced `BigInt` rationals and serialize numerator and denominator as base-10 strings.
-  - [ ] Validate unique declarations and rule IDs, source spans, enum domains, rational invariants, and at-least-two core constraints at the external boundary.
-  - [ ] Compile `RuleScope AND activation`, normalize negation, flatten Boolean composition, retain deterministic atom order, and separate `MAY` permission from hard consequences.
-  - [ ] Parse supported EARS and legal forms offline, preserve rejected source, and carry recognized unsupported constructs with exact provenance.
-  - [ ] Export only the browser-safe model, validation, parser, rational, and condition APIs from `@covenant/core`.
+  - [x] Define readonly `CovenantDocument`, `Rule`, `RuleScope`, activation `Condition`, `DeonticModality`, solver evidence, verdict, repair, and telemetry contracts without `any`.
+  - [x] Parse decimal source literals directly into reduced `BigInt` rationals and serialize numerator and denominator as base-10 strings.
+  - [x] Validate unique declarations and rule IDs, source spans, enum domains, rational invariants, and at-least-two core constraints at the external boundary.
+  - [x] Compile `RuleScope AND activation`, normalize negation, flatten Boolean composition, retain deterministic atom order, and separate `MAY` permission from hard consequences.
+  - [x] Parse supported EARS and legal forms offline, preserve rejected source, and carry recognized unsupported constructs with exact provenance.
+  - [x] Export only the browser-safe model, validation, parser, rational, and condition APIs from `@covenant/core`.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/parser.test.ts test/model-validation.test.ts test/condition-normalization.test.ts && pnpm --filter @covenant/core build && pnpm typecheck`
 
