@@ -102,8 +102,8 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   _Requirements: 7.1–7.9, 8.1–8.5, 9.1–9.6, 13.1–13.6, 14.1–14.6, 15.1–15.8, 16.3_
 
-- [ ] 10. Ship Spec Inquisitor with three Cursed Scrolls and EARS/PBT export
-  Status: open
+- [x] 10. Ship Spec Inquisitor with three Cursed Scrolls and EARS/PBT export
+  Status: resolved
 
   Blocked by: 9
 
@@ -131,13 +131,13 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   **Test seam to write first:** `app-1-spec-inquisitor/src/App.test.tsx`. Render the application using only public `@covenant/core` APIs, select each of the three normative App 1 fixtures, assert exact source and expected finding evidence, review and apply Chalice A and B from separate clean revisions, require the target finding to disappear with 100% `~C` preservation, and assert the EARS and executable `fast-check` downloads contain the patched source and replayable formal property.
 
-  - [ ] Encode the exact pre-verified AST, source locations, expected finding fingerprints, and normative pair edits for RBAC emergency override, hardened sandbox liveness, and API rate-limit/CWE-862.
-  - [ ] Validate every fixture at load time; never reconstruct formal meaning from rendered text or call the parser, network, or an LLM for the sample path.
-  - [ ] Orchestrate immutable source, sample, verification, filter, finding, focus, patch, and drawer state through one reducer and Core's `verifyCovenant`/`applyChalicePatch` seams.
-  - [ ] Apply the Spec Inquisitor skin, seven/five desktop composition, finite phosphor trace, responsive source-first order, and shared component imports without duplicated formal or Tribunal logic.
-  - [ ] Support edited/pasted EARS through `parseOffline`, retain diagnostics and prior evidence safely, and keep operation fully client-side.
-  - [ ] Export UTF-8 patched `requirements.md` and a deterministic executable `fast-check` snippet through explicit user-triggered downloads.
-  - [ ] Exercise all three samples with outbound network blocked, keyboard navigation, automated accessibility checks, both Chalices, exports, and visual captures at 360, 768, 1024, 1280, and 1600 CSS pixels.
+  - [x] Encode the exact pre-verified AST, source locations, expected finding fingerprints, and normative pair edits for RBAC emergency override, hardened sandbox liveness, and API rate-limit/CWE-862.
+  - [x] Validate every fixture at load time; never reconstruct formal meaning from rendered text or call the parser, network, or an LLM for the sample path.
+  - [x] Orchestrate immutable source, sample, verification, filter, finding, focus, patch, and drawer state through one reducer and Core's `verifyCovenant`/`applyChalicePatch` seams.
+  - [x] Apply the Spec Inquisitor skin, seven/five desktop composition, finite phosphor trace, responsive source-first order, and shared component imports without duplicated formal or Tribunal logic.
+  - [x] Support edited/pasted EARS through `parseOffline`, retain diagnostics and prior evidence safely, and keep operation fully client-side.
+  - [x] Export UTF-8 patched `requirements.md` and a deterministic executable `fast-check` snippet through explicit user-triggered downloads.
+  - [x] Exercise all three samples with outbound network blocked, keyboard navigation, automated accessibility checks, both Chalices, exports, and visual captures at 360, 768, 1024, 1280, and 1600 CSS pixels.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/spec-inquisitor exec vitest run src/App.test.tsx && pnpm --filter @covenant/spec-inquisitor build && pnpm --filter @covenant/spec-inquisitor exec playwright test && pnpm typecheck`
 
