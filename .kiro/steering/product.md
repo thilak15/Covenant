@@ -9,50 +9,54 @@
 
 ## Core concept and value proposition
 
-COVENANT is a neuro-symbolic **Contradiction & Loophole Exorcist** skeleton. It translates natural-language rules, including EARS software specifications and legal contract clauses, into formal deontic logic. It uses formal SMT/SAT solving to detect subtle multi-variable logical contradictions, security and liveness traps, and financial loopholes. For every conflict, COVENANT extracts the minimal conflicting clause subset, called the **Unsat Core**; synthesizes a concrete breaking scenario, called the **Phantom Witness**; and presents **Two Cursed Chalices**, two concrete formal resolutions. Selecting a Chalice patches the document in real time and proves that 100% of non-conflicting clauses remain preserved.
+COVENANT is a neuro-symbolic **Contradiction & Loophole Exorcist** skeleton. It translates natural-language rules, including EARS software specifications and legal contract clauses, into formal deontic logic. It uses formal SMT/SAT solving to detect subtle multi-variable logical contradictions, security and liveness traps, and financial loopholes. For every proven conflict, COVENANT extracts the subset-minimal conflicting rule set, called the **Unsat Core**, and synthesizes a concrete breaking scenario, called the **Phantom Witness**. Standard supported patterns and all six Cursed Sample Scrolls present **Two Cursed Chalices**, two verified formal resolutions. Custom input may instead receive one verified patch or a manual-repair reason without weakening its `FAIL` verdict. Selecting a Chalice patches the document in real time and proves that 100% of non-conflicting clauses remain preserved.
 
 ## Shared Skeleton Foundation
 
 `packages/covenant-core` is the lean shared Skeleton Foundation, published to the workspaces as `@covenant/core`, with a target of fewer than 1,200 lines of code.
 
-### Deontic AST and compiler
+### Shared domain model and compiler
 
-The compiler parses structured rules into typed AST nodes:
+The compiler parses structured source clauses into typed domain nodes and records:
 
 - `Rule`
 - `DeonticModality`: `MUST` | `MUST_NOT` | `MAY`
-- `Condition`, with Boolean logic and numeric comparisons or bounds
+- `Condition`, with Boolean logic, enum comparisons, and exact numeric bounds
+- `NumericBound`
 - `RuleScope`
 - `UnsatCore`
 - `PhantomWitness`
 - `ChalicePatch`
+- `ChalicePair`
+- `ResolutionPayload`: `pair` | `single` | `manual`
 - `InquisitorVerdict`
+- `OpenPBTStats`
 
 ### The 5 Hooded Inquisitors
 
 The five formal verification properties are:
 
 1. **Testability:** Flags vague, untestable, or subjective language that lacks measurable conditions.
-2. **Consistency:** Detects `UNSAT` logical contradictions across two or more interacting clauses and extracts the minimal Unsat Core.
+2. **Consistency:** Detects `UNSAT` logical contradictions across two or more interacting rules and extracts a subset-minimal Unsat Core.
 3. **Completeness:** Detects unhandled input-space combinations and missing fallback states.
 4. **Unambiguity:** Flags overlapping scopes or conflicting modal quantifiers on identical conditions.
 5. **Security & Liveness:** Checks 60-CWE Spec Security Hardening obligations and detects the **Sandbox That Blocks Normal Work** liveness deadlock, where cumulative deny or security rules inadvertently block legitimate primary workflows.
 
 ### Conflict evidence and repair
 
-- **Unsat Core Extractor:** Isolates the exact minimal subset of rule IDs that causes an `UNSAT` contradiction. It never dumps the whole document in place of the minimal subset.
-- **Phantom Witness Synthesizer:** Converts a failing solver state into a human-readable table of concrete variable assignments. Example: `UserRole = "Contractor"`, `EmergencyOverride = true`, `Day = "Sunday"` results in `Both ALLOW and DENY triggered simultaneously`.
-- **Two Cursed Chalices Patcher and Preservation Verifier:** Generates two concrete formal resolution options, Chalice A and Chalice B, for every detected issue. Selecting a Chalice rewrites the source document live, re-runs verification, and proves the Preservation Property: conflicting set `C` is fixed while 100% of non-conflicting clauses `~C` remain intact.
+- **Unsat Core Extractor:** Isolates a stable, rule-level, subset-minimal set of rule IDs for one contradiction. It never dumps the whole document in place of the required core.
+- **Phantom Witness Synthesizer:** Solves the conjunction of the core rules' scopes and activations, then renders the canonical model as a human-readable table. Example: `UserRole = "Contractor"`, `EmergencyOverride = true`, `Day = "Sunday"` triggers `Both ALLOW and DENY simultaneously`.
+- **Two Cursed Chalices Patcher and Preservation Verifier:** Produces a verified Chalice A and Chalice B for every standard supported pattern and all six Cursed Sample Scrolls. Custom input may produce a verified pair, one verified patch with a reason, or a manual-repair reason; repair availability never changes a proven `FAIL`. Selecting a patch rewrites the source document live, re-runs verification, and proves the Preservation Property: conflict set `C` is fixed while 100% of non-conflicting clauses `~C` remain intact.
 
 ### Property-based verification
 
-COVENANT uses `fast-check` with at least 200 randomized runs per property to verify:
+COVENANT uses Vitest and `fast-check` in Node with at least 200 successful runs per property to verify:
 
-1. **Soundness:** Mutually exclusive rules always return `UNSAT` with a minimal Unsat Core.
+1. **Soundness:** Generated jointly applicable rules with incompatible hard consequences always return `UNSAT` with a subset-minimal Unsat Core, while mutually exclusive rules never report a Consistency contradiction.
 2. **Preservation:** Clauses in `~C` never break after a Chalice patch fixes `C`.
 3. **Solver Equivalence:** The browser deterministic solver matches Node `z3-solver` results.
 
-The verification panel includes a compact OpenPBTStats-style distribution summary showing valid edge cases, duplicates, and discarded inputs.
+The verification suite exports typed `OpenPBTStats` snapshots showing valid edge cases, duplicates, and discarded inputs. The static applications display those snapshots but do not run the 200-case suites during live browser verification.
 
 ## Locked solver and deployment decisions
 
@@ -87,11 +91,11 @@ Use a bespoke Gothic Inquisition Tribunal: obsidian slate, aged vellum, tarnishe
 
 ### Shared interactive components
 
-1. **The 5 Hooded Inquisitors Header Bar:** Lanterns burn emerald on SAT and flare crimson on UNSAT. Each Inquisitor is clickable to filter findings.
+1. **The 5 Hooded Inquisitors Header Bar:** Lanterns burn emerald on `PASS`, flare crimson on `FAIL`, and glow amber on `UNKNOWN`. Each Inquisitor is clickable to filter findings.
 2. **Split Scroll / Clause Inspector:** Source text appears on the left. Conflicting lines are highlighted in crimson and linked to Unsat Core IDs.
 3. **The Phantom Witness Stand:** Shows the concrete breaking variable assignment as a card.
-4. **The Two Cursed Chalices Resolution Panel:** Shows two formal patch previews side by side. Clicking a Chalice patches the scroll live and triggers re-verification.
-5. **Crimson Wax Seal of Formal Certification:** Applies an animated stamp once all five Inquisitors turn emerald SAT.
+4. **The Two Cursed Chalices Resolution Panel:** Shows Chalice A and B side by side when a verified pair exists. For custom input with fewer safe repairs, it shows the verified single patch or manual-repair reason without weakening the finding. Clicking a patch applies it live and triggers re-verification.
+5. **Crimson Wax Seal of Formal Certification:** Applies an animated stamp once all five Inquisitors reach `PASS`.
 6. **Compact OpenPBTStats / Verification Telemetry Drawer:** Shows solver latency in milliseconds, clauses checked, and PBT coverage statistics.
 
 ## Application 1: Spec Inquisitor

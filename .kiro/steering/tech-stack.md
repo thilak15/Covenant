@@ -40,10 +40,10 @@ Do not duplicate core solver, parser, telemetry, or shared UI logic in either ap
 
 ## Solver runtime boundary
 
-`packages/covenant-core` exposes one clean `CovenantSolver` interface and two implementations:
+`packages/covenant-core` exposes one promise-based `CovenantSolver` interface over normalized, provenance-bearing problems and two implementations:
 
-- **`BrowserDeterministicSolver`:** Zero-dependency pure-TypeScript SAT/DPLL plus numeric-interval bounds solver. It must complete pre-loaded cases in under 15 ms inside any browser, with no `SharedArrayBuffer`, COOP/COEP headers, or WASM download.
-- **`NodeZ3Solver`:** A real `z3-solver` adapter for Node.js. It runs in Vitest PBT solver-equivalence checks and in `powers/z3-covenant-power/`.
+- **`BrowserDeterministicSolver`:** Zero-runtime-dependency pure-TypeScript SAT/DPLL plus exact rational numeric-interval bounds solver. It must complete pre-loaded cases in under 15 ms inside any browser, with no live PBT execution, `SharedArrayBuffer`, COOP/COEP headers, or WASM download.
+- **`NodeZ3Solver`:** A real `z3-solver` adapter exposed only through a Node-specific entry point such as `@covenant/core/node`. It runs in Vitest PBT solver-equivalence checks and in `powers/z3-covenant-power/`.
 
 The browser export graph must not import `NodeZ3Solver` or `z3-solver`. Production Vite bundles must contain no Z3 WASM or Node adapter code.
 
@@ -69,13 +69,13 @@ Shared components live in `packages/covenant-core/src/tribunal-ui/`: the 5 Hoode
 
 ## Verification stack
 
-Vitest and `fast-check` run at least 200 randomized cases per formal property:
+Vitest and `fast-check` run in Node with at least 200 successful cases per formal property; discarded inputs do not count toward that minimum:
 
-- Soundness, including minimal Unsat Core behavior
+- Soundness, including jointly applicable contradictions, subset-minimal Unsat Core behavior, and rejection of false contradictions between mutually exclusive rules
 - `C` versus `~C` Chalice-patch preservation
 - Browser deterministic solver versus Node `z3-solver` equivalence
 
-The OpenPBTStats-style readout records valid edge cases, duplicates, and discarded inputs. Runtime telemetry also reports solver latency in milliseconds and clauses checked.
+The Node suite exports typed `OpenPBTStats` snapshots containing successful runs, tagged edge cases, normalized-input duplicates, discarded inputs, seed, and duration. The static applications display these snapshots without executing the randomized suites during live verification. Runtime latency and clauses checked remain separate `VerificationTelemetry`.
 
 The later `.kiro/hooks/verify-on-save.json` hook will run core PBT tests and cross-application typechecking on save, and perform an EARS audit when a file under `.kiro/specs/` is saved.
 
