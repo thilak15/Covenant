@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "dist"
   ],
@@ -17,10 +19,11 @@
     "./node": {
       "types": "./dist/node/index.d.ts",
       "node": "./dist/node/index.js"
-    }
+    },
+    "./tribunal.css": "./dist/tribunal-ui/tribunal.css"
   },
   "scripts": {
-    "build": "pnpm check:loc && tsc -p tsconfig.build.json",
+    "build": "pnpm check:loc && tsc -p tsconfig.build.json && mkdir -p dist/tribunal-ui/fonts && cp src/tribunal-ui/tribunal.css dist/tribunal-ui/tribunal.css && cp src/tribunal-ui/fonts/*.woff2 dist/tribunal-ui/fonts/",
     "check:loc": "node ./scripts/check-loc.mjs",
     "dev": "tsc -p tsconfig.build.json --watch",
     "test": "vitest run --minWorkers=1 --maxWorkers=1",
@@ -28,12 +31,22 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
     "@types/node": "^20.17.14",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "fast-check": "^4.11.0",
+    "jsdom": "^25.0.0",
     "typescript": "^5.7.3",
     "vitest": "^2.1.9"
   },
   "dependencies": {
+    "framer-motion": "^12.0.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "z3-solver": "^5.4.1"
   }
 }

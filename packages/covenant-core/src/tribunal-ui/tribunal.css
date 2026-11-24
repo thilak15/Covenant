@@ -1,0 +1,471 @@
+@font-face {
+  font-family: "Alegreya";
+  src: url("./fonts/alegreya-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400 700;
+}
+
+@font-face {
+  font-family: "Bodoni Moda";
+  src: url("./fonts/bodoni-moda-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Commissioner";
+  src: url("./fonts/commissioner-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400 700;
+}
+
+@font-face {
+  font-family: "Fragment Mono";
+  src: url("./fonts/fragment-mono-latin.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+[data-tribunal-skin] {
+  --cov-obsidian-950: #090c0e;
+  --cov-obsidian-900: #101518;
+  --cov-obsidian-800: #182024;
+  --cov-obsidian-700: #273137;
+  --cov-vellum-50: #f5e9cb;
+  --cov-vellum-100: #e9d6aa;
+  --cov-vellum-300: #cdb37a;
+  --cov-vellum-ink: #16120d;
+  --cov-tarnished-brass: #b69355;
+  --cov-dark-brass: #74552e;
+  --cov-emerald-sat: #31c978;
+  --cov-emerald-deep: #0b6b45;
+  --cov-blood-unsat: #d94252;
+  --cov-blood-deep: #811525;
+  --cov-amber-unknown: #d49a37;
+  --cov-app1-grid: #21463d;
+  --cov-app1-phosphor: #79e6aa;
+  --cov-app2-mahogany: #321719;
+  --cov-app2-wax: #a51f32;
+  --cov-scrim: rgba(9, 12, 14, 0.78);
+
+  --cov-font-app1-display: Alegreya, Iowan Old Style, Georgia, serif;
+  --cov-font-app2-display: Bodoni Moda, Didot, Times New Roman, serif;
+  --cov-font-headline: Alegreya, Iowan Old Style, Georgia, serif;
+  --cov-font-body: Commissioner, ui-sans-serif, system-ui, sans-serif;
+  --cov-font-label: Commissioner, ui-sans-serif, system-ui, sans-serif;
+  --cov-font-witness: Fragment Mono, ui-monospace, SFMono-Regular, monospace;
+  --cov-size-app1-display: clamp(2rem, 4vw, 4.5rem);
+  --cov-size-app2-display: clamp(2rem, 4vw, 4.5rem);
+  --cov-size-headline: clamp(1.375rem, 2vw, 2rem);
+  --cov-size-body: 1rem;
+  --cov-size-label: 0.75rem;
+  --cov-size-witness: 0.875rem;
+  --cov-weight-app1-display: 650;
+  --cov-weight-app2-display: 600;
+  --cov-weight-headline: 600;
+  --cov-weight-body: 430;
+  --cov-weight-label: 650;
+  --cov-weight-witness: 400;
+  --cov-leading-app1-display: 0.96;
+  --cov-leading-app2-display: 0.94;
+  --cov-leading-headline: 1.08;
+  --cov-leading-body: 1.55;
+  --cov-leading-label: 1.2;
+  --cov-leading-witness: 1.5;
+  --cov-tracking-app1-display: -0.025em;
+  --cov-tracking-app2-display: -0.03em;
+  --cov-tracking-label: 0.08em;
+
+  --cov-radius-seal: 999px;
+  --cov-radius-control: 3px;
+  --cov-radius-panel: 6px;
+  --cov-radius-parchment: 10px 4px 8px 3px;
+  --cov-space-hairline: 1px;
+  --cov-space-xs: 4px;
+  --cov-space-sm: 8px;
+  --cov-space-md: 16px;
+  --cov-space-lg: 24px;
+  --cov-space-xl: 32px;
+  --cov-space-2xl: 48px;
+  --cov-space-3xl: 72px;
+
+  --cov-bg: var(--cov-obsidian-950);
+  --cov-rail: var(--cov-obsidian-900);
+  --cov-paper: var(--cov-vellum-50);
+  --cov-paper-muted: var(--cov-vellum-100);
+  --cov-ink: var(--cov-vellum-ink);
+  --cov-action: var(--cov-tarnished-brass);
+  --cov-pass: var(--cov-emerald-sat);
+  --cov-fail: var(--cov-blood-unsat);
+  --cov-unknown: var(--cov-amber-unknown);
+  --cov-shell-background: var(--cov-obsidian-950);
+  --cov-shell-text: var(--cov-vellum-50);
+  --cov-shell-font: var(--cov-font-body);
+  --cov-parchment-background: var(--cov-vellum-50);
+  --cov-parchment-text: var(--cov-vellum-ink);
+  --cov-parchment-radius: var(--cov-radius-parchment);
+  --cov-parchment-padding: var(--cov-space-lg);
+  --cov-button-primary-background: var(--cov-tarnished-brass);
+  --cov-button-primary-text: var(--cov-obsidian-950);
+  --cov-button-primary-radius: var(--cov-radius-control);
+  --cov-button-primary-padding: 12px 18px;
+  --cov-button-danger-background: var(--cov-blood-deep);
+  --cov-button-danger-text: var(--cov-vellum-50);
+  --cov-button-danger-radius: var(--cov-radius-control);
+  --cov-button-danger-padding: 12px 18px;
+  --cov-witness-background: var(--cov-obsidian-900);
+  --cov-witness-text: var(--cov-app1-phosphor);
+  --cov-witness-radius: var(--cov-radius-control);
+  --cov-witness-padding: 8px 12px;
+  --cov-lantern-radius: var(--cov-radius-seal);
+  --cov-lantern-size: 16px;
+  --cov-lantern-pass-background: var(--cov-emerald-deep);
+  --cov-lantern-pass-text: var(--cov-emerald-sat);
+  --cov-lantern-fail-background: var(--cov-blood-deep);
+  --cov-lantern-fail-text: var(--cov-blood-unsat);
+  --cov-lantern-unknown-background: var(--cov-dark-brass);
+  --cov-lantern-unknown-text: var(--cov-amber-unknown);
+  --cov-shadow-obsidian-rail: 0 1px 0 rgba(182, 147, 85, 0.35), 0 12px 30px rgba(0, 0, 0, 0.34);
+  --cov-shadow-vellum-lift: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 10px 28px rgba(0, 0, 0, 0.28);
+  --cov-shadow-lantern-flare: 0 0 0 1px currentColor, 0 0 18px currentColor;
+  --cov-shadow-seal-contact: 0 4px 0 rgba(72, 8, 18, 0.58), 0 12px 24px rgba(0, 0, 0, 0.28);
+
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--cov-shell-text);
+  background: var(--cov-shell-background);
+  font-family: var(--cov-shell-font);
+  font-size: var(--cov-size-body);
+  font-weight: var(--cov-weight-body);
+  line-height: var(--cov-leading-body);
+  color-scheme: dark;
+  scrollbar-color: var(--cov-dark-brass) var(--cov-obsidian-900);
+}
+
+[data-tribunal-skin] *,
+[data-tribunal-skin] *::before,
+[data-tribunal-skin] *::after {
+  box-sizing: inherit;
+}
+
+[data-tribunal-skin="spec-inquisitor"] {
+  --cov-font-display: var(--cov-font-app1-display);
+  --cov-skin-well: var(--cov-obsidian-900);
+}
+
+[data-tribunal-skin="clause-exorcist"] {
+  --cov-font-display: var(--cov-font-app2-display);
+  --cov-skin-well: var(--cov-app2-mahogany);
+}
+
+[data-tribunal-skin] ::selection {
+  color: var(--cov-obsidian-950);
+  background: var(--cov-tarnished-brass);
+}
+
+[data-tribunal-skin] :focus-visible {
+  outline: 2px solid var(--cov-vellum-50);
+  outline-offset: 2px;
+}
+
+.cov-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cov-tribunal-workspace {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--cov-space-lg);
+  width: min(100%, 1600px);
+  margin-inline: auto;
+  padding: var(--cov-space-lg);
+}
+
+.cov-tribunal-source {
+  grid-column: span 7;
+  min-width: 0;
+}
+
+.cov-tribunal-evidence {
+  grid-column: span 5;
+  min-width: 0;
+}
+
+.cov-inquisitor-bar {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  border: var(--cov-space-hairline) solid var(--cov-dark-brass);
+  border-radius: var(--cov-radius-panel);
+  color: var(--cov-vellum-50);
+  background: var(--cov-rail);
+  box-shadow: var(--cov-shadow-obsidian-rail);
+  overflow: hidden;
+}
+
+.cov-inquisitor-bar__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cov-space-md);
+  min-height: 44px;
+  padding: var(--cov-space-sm) var(--cov-space-md);
+  border-bottom: var(--cov-space-hairline) solid var(--cov-dark-brass);
+}
+
+.cov-inquisitor-bar__title {
+  font-family: var(--cov-font-headline);
+  font-size: 1.125rem;
+  font-weight: var(--cov-weight-headline);
+  line-height: var(--cov-leading-headline);
+}
+
+.cov-inquisitor-bar__all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cov-space-sm);
+  min-height: 44px;
+  padding: var(--cov-space-sm) 12px;
+  border: var(--cov-space-hairline) solid var(--cov-dark-brass);
+  border-radius: var(--cov-radius-control);
+  color: var(--cov-vellum-50);
+  background: transparent;
+  font: 650 var(--cov-size-label) / var(--cov-leading-label) var(--cov-font-label);
+  letter-spacing: var(--cov-tracking-label);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cov-inquisitor-bar__all:hover,
+.cov-inquisitor-bar__all[aria-pressed="true"] {
+  border-color: var(--cov-tarnished-brass);
+  color: var(--cov-obsidian-950);
+  background: var(--cov-tarnished-brass);
+}
+
+.cov-inquisitor-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.cov-inquisitor-tabs__item {
+  min-width: 0;
+  transition-delay: var(--cov-lantern-delay);
+}
+
+.cov-inquisitor-tab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "hood copy" "verdict verdict";
+  align-content: center;
+  gap: var(--cov-space-xs) var(--cov-space-sm);
+  width: 100%;
+  min-height: 96px;
+  padding: 12px;
+  border: 0;
+  border-right: var(--cov-space-hairline) solid var(--cov-obsidian-700);
+  color: var(--cov-vellum-100);
+  background: transparent;
+  font-family: var(--cov-font-body);
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms cubic-bezier(0.4, 0, 0.2, 1), background-color 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cov-inquisitor-tabs__item:last-child .cov-inquisitor-tab {
+  border-right: 0;
+}
+
+.cov-inquisitor-tab:hover,
+.cov-inquisitor-tab[aria-selected="true"] {
+  color: var(--cov-vellum-50);
+  background: var(--cov-obsidian-800);
+}
+
+.cov-inquisitor-tab[aria-selected="true"] {
+  box-shadow: inset 0 -2px 0 var(--cov-tarnished-brass);
+}
+
+.cov-inquisitor-tab__hood {
+  grid-area: hood;
+  align-self: center;
+  color: var(--cov-tarnished-brass);
+}
+
+.cov-inquisitor-tab__copy {
+  display: grid;
+  grid-area: copy;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cov-inquisitor-tab__name {
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.cov-inquisitor-tab__finding-count {
+  color: var(--cov-vellum-300);
+  font-family: var(--cov-font-witness);
+  font-size: 0.6875rem;
+  line-height: var(--cov-leading-witness);
+  font-variant-numeric: tabular-nums;
+}
+
+.cov-inquisitor-tab__verdict {
+  display: flex;
+  grid-area: verdict;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--cov-font-label);
+  font-size: var(--cov-size-label);
+  font-weight: var(--cov-weight-label);
+  line-height: var(--cov-leading-label);
+  letter-spacing: var(--cov-tracking-label);
+}
+
+.cov-inquisitor-tab__lantern {
+  position: relative;
+  display: block;
+  width: var(--cov-lantern-size);
+  height: var(--cov-lantern-size);
+  margin-left: auto;
+  border: 2px solid currentColor;
+  border-radius: var(--cov-lantern-radius);
+  background: var(--cov-obsidian-950);
+}
+
+.cov-inquisitor-tab__lantern-flare {
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--cov-lantern-radius);
+  box-shadow: var(--cov-shadow-lantern-flare);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cov-inquisitor-tab[data-status="PASS"] .cov-inquisitor-tab__verdict {
+  color: var(--cov-pass);
+}
+
+.cov-inquisitor-tab[data-status="PASS"] .cov-inquisitor-tab__lantern {
+  background: var(--cov-lantern-pass-background);
+}
+
+.cov-inquisitor-tab[data-status="FAIL"] .cov-inquisitor-tab__verdict {
+  color: var(--cov-fail);
+}
+
+.cov-inquisitor-tab[data-status="FAIL"] .cov-inquisitor-tab__lantern {
+  background: var(--cov-lantern-fail-background);
+}
+
+.cov-inquisitor-tab[data-status="UNKNOWN"] .cov-inquisitor-tab__verdict {
+  color: var(--cov-unknown);
+}
+
+.cov-inquisitor-tab[data-status="UNKNOWN"] .cov-inquisitor-tab__lantern {
+  background: var(--cov-lantern-unknown-background);
+}
+
+.cov-inquisitor-tab[aria-selected="true"] .cov-inquisitor-tab__lantern {
+  box-shadow: var(--cov-shadow-lantern-flare);
+}
+
+@media (max-width: 1279px) {
+  .cov-tribunal-source,
+  .cov-tribunal-evidence {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cov-tribunal-workspace {
+    display: block;
+  }
+
+  .cov-tribunal-evidence {
+    margin-top: var(--cov-space-lg);
+  }
+}
+
+@media (max-width: 639px) {
+  .cov-inquisitor-bar__heading {
+    align-items: stretch;
+  }
+
+  .cov-inquisitor-bar__title {
+    align-self: center;
+  }
+
+  .cov-inquisitor-tabs {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  .cov-inquisitor-tabs__item {
+    flex: 0 0 176px;
+  }
+
+  .cov-inquisitor-tab {
+    min-height: 92px;
+  }
+}
+
+@media (forced-colors: active) {
+  .cov-inquisitor-bar,
+  .cov-inquisitor-bar__all,
+  .cov-inquisitor-tab {
+    border-color: CanvasText;
+    forced-color-adjust: auto;
+  }
+
+  .cov-inquisitor-tab[aria-selected="true"] {
+    color: HighlightText;
+    background: Highlight;
+    box-shadow: none;
+  }
+
+  .cov-inquisitor-tab:focus-visible {
+    outline: 3px solid CanvasText;
+    outline-offset: -4px;
+  }
+
+  .cov-inquisitor-tab[aria-selected="true"]:focus-visible {
+    outline-color: HighlightText;
+  }
+
+  .cov-inquisitor-tab__lantern {
+    border: 3px double currentColor;
+    background: Canvas;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cov-inquisitor-tabs__item,
+  .cov-inquisitor-tab {
+    transition: none;
+    transition-delay: 0ms;
+  }
+}

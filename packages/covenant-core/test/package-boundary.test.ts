@@ -175,11 +175,12 @@ describe("the monorepo package boundary", () => {
     const exportsMap = readRecord(corePackage.exports);
     const rootExport = readRecord(exportsMap["."]);
 
-    expect(corePackage.sideEffects).toBe(false);
+    expect(corePackage.sideEffects).toEqual(["**/*.css"]);
     expect(rootExport).toMatchObject({
       import: "./dist/index.js",
       types: "./dist/index.d.ts",
     });
+    expect(exportsMap["./tribunal.css"]).toBe("./dist/tribunal-ui/tribunal.css");
     expect(exportsMap["./node"]).toEqual({
       types: "./dist/node/index.d.ts",
       node: "./dist/node/index.js",

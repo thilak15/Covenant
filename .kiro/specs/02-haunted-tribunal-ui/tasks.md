@@ -2,8 +2,8 @@
 
 Task numbers continue from the COVENANT Core checklist. Work the frontier in order. A task is complete only after its listed command passes. Add the named failing test seam before changing production code.
 
-- [ ] 7. Establish shared Tribunal tokens and the Five Hooded Inquisitors Lantern Bar
-  Status: open
+- [x] 7. Establish shared Tribunal tokens and the Five Hooded Inquisitors Lantern Bar
+  Status: resolved
 
   Blocked by: 6
 
@@ -29,12 +29,12 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
 
   **Test seam to write first:** `packages/covenant-core/test/tribunal-ui/inquisitor-lantern-bar.test.tsx`. Render the public `InquisitorLanternBar` with the invariant five-verdict tuple, then assert formal order, full names, verdict words, counts, non-color icons, controlled filtering, tablist semantics, Arrow/Home/End navigation, Enter/Space activation, one aggregate announcement, and the reduced-motion no-stagger branch.
 
-  - [ ] Add React 19, Framer Motion, Lucide Icons, and DOM test dependencies without exposing Node-only Core modules to browser consumers.
-  - [ ] Map every normative `DESIGN.md` token to stable `--cov-*` properties and expose `@covenant/core/tribunal.css` with CSS retained as a side effect.
-  - [ ] Self-host the four subsetted WOFF2 files with documented fallback stacks and no remote font URL.
-  - [ ] Implement `TribunalTheme`, shared prop contracts, semantic status aliases, responsive shell rules, focus styles, forced-colors behavior, and reduced-motion variants.
-  - [ ] Implement the controlled Lantern Bar with exactly five tabs in formal order and preserve the immutable `VerificationReport` while filtering.
-  - [ ] Assert approved contrast pairs and reject purple/violet/magenta/indigo tokens or decorations.
+  - [x] Add React 19, Framer Motion, Lucide Icons, and DOM test dependencies without exposing Node-only Core modules to browser consumers.
+  - [x] Map every normative `DESIGN.md` token to stable `--cov-*` properties and expose `@covenant/core/tribunal.css` with CSS retained as a side effect.
+  - [x] Self-host the four subsetted WOFF2 files with documented fallback stacks and no remote font URL.
+  - [x] Implement `TribunalTheme`, shared prop contracts, semantic status aliases, responsive shell rules, focus styles, forced-colors behavior, and reduced-motion variants.
+  - [x] Implement the controlled Lantern Bar with exactly five tabs in formal order and preserve the immutable `VerificationReport` while filtering.
+  - [x] Assert approved contrast pairs and reject purple/violet/magenta/indigo tokens or decorations.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/tribunal-ui/inquisitor-lantern-bar.test.tsx test/tribunal-ui/theme-contract.test.tsx && pnpm --filter @covenant/core build && pnpm typecheck`
 

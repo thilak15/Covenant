@@ -9,3 +9,4 @@ export { cweControls, securityControlVariableNames } from "./security-controls.j
 export { findingFingerprint } from "./repairs.js";
 export { applyChalicePatch, verifyCovenant } from "./engine.js";
 export { formatOpenPBTStats, formatVerificationTelemetry, openPBTStatsSnapshot, validateOpenPBTSnapshot } from "./pbt-stats.js";
+export * from "./tribunal-ui/index.js";
