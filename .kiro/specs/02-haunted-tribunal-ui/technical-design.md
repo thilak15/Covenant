@@ -54,7 +54,7 @@ app shell
 | Application shell | Sample choice, source editing, async orchestration, exports, current view state | Duplicated Tribunal markup or formal logic |
 | Skin | CSS custom-property values and restrained decorative layers | Different semantics, order, or hidden evidence |
 
-### Module layout and line budget
+### Module layout and lean boundaries
 
 ```text
 packages/covenant-core/src/tribunal-ui/
@@ -65,7 +65,7 @@ packages/covenant-core/src/tribunal-ui/
   motion.ts                shared Framer Motion variants
 ```
 
-The feature-01 scanner counts `.ts` and `.tsx`, not CSS. `Tribunal.tsx`, `types.ts`, `motion.ts`, and `index.ts` must remain at or below the reserved 275 nonblank, non-comment TypeScript-token lines. Repeated presentation is data-driven; the applications do not copy it to evade the limit. Sample AST data belongs in application fixture modules because each corpus is application-specific.
+`src/tribunal-ui/` remains a focused browser-safe presentation layer. `Tribunal.tsx`, `types.ts`, `motion.ts`, and `index.ts` consume Core domain contracts but do not own parsing, solving, evidence synthesis, or patch verification. Repeated presentation is data-driven, and the applications do not copy shared behavior. Complete, readable UI behavior must not be compressed or truncated to satisfy an artificial line count. Sample AST data belongs in application fixture modules because each corpus is application-specific.
 
 `src/index.ts` re-exports every public Tribunal component and prop type from the browser-safe root. The package export map also exposes `@covenant/core/tribunal.css` as a stable stylesheet subpath. Package metadata lists `**/*.css` under `sideEffects` so production tree-shaking cannot discard the shared styles. A bundle fixture proves that root UI and CSS imports include no Node entry or Z3 asset.
 
@@ -979,7 +979,7 @@ Production asset inspection fails on `z3-solver`, `NodeZ3Solver`, `.wasm`, `Shar
 | 12 | Six normative fixture definitions and fixture integrity |
 | 13 | Central motion variants and reduced-motion branch |
 | 14–15 | Responsive composition, accessibility, edge states |
-| 16 | Test strategy, bundle and offline gates, line budget |
+| 16 | Test strategy, bundle and offline gates, modular engine/UI boundaries |
 
 ## Out of scope
 

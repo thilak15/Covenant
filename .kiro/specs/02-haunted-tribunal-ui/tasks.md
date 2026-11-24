@@ -180,7 +180,7 @@ Task numbers continue from the COVENANT Core checklist. Work the frontier in ord
   - [ ] Export a deterministic protective redline with textual addition/removal/replacement markers and a plain-English negotiation summary tied to the selected verified patch.
   - [ ] Exercise all three samples with outbound network blocked, keyboard navigation, automated accessibility checks, all findings and both Chalices, exports, and visual captures at 360, 768, 1024, 1280, and 1600 CSS pixels.
   - [ ] Extend browser bundle inspection across both production applications and reject Z3, WASM, Node built-ins, `SharedArrayBuffer`, remote fonts, required backend endpoints, or duplicated Core solver/parser/repair code.
-  - [ ] Run the complete repository build, unit/integration suite, 200-run PBT suite, typecheck, LOC gate, and both application browser suites as the release gate.
+  - [ ] Run the complete repository build, unit/integration suite, 200-run PBT suite, typecheck, production source policy check, and both application browser suites as the release gate.
 
   **Exact pnpm verification command:** `pnpm --filter @covenant/clause-exorcist exec vitest run src/App.test.tsx && pnpm --filter @covenant/clause-exorcist build && pnpm --filter @covenant/clause-exorcist exec playwright test && pnpm build && pnpm test && pnpm test:pbt && pnpm typecheck`
 

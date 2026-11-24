@@ -17,6 +17,17 @@ COVENANT translates EARS software requirements and legal contract clauses into f
 
 The three sample scrolls in each application carry pre-verified ASTs, so their primary path has 0 ms API latency and $0 cost.
 
+## Approved deterministic source grammar
+
+The offline parser, downstream tasks, and all six Cursed Sample Scrolls use these normative productions exactly:
+
+```text
+[ID:] [WHEN|WHILE|WHERE <cond>, | IF <cond> THEN] THE SYSTEM SHALL|SHALL NOT|MAY <cond>
+Clause <ref>: [IF <cond> THEN] <Party> MUST|MUST NOT|MAY <cond>
+```
+
+Square brackets mark optional segments, pipes mark alternatives, and `<cond>`, `<ref>`, and `<Party>` are grammar placeholders. The first production is the supported EARS form; the second is the supported structured legal-clause form. Other source shapes are malformed unless the parser explicitly recognizes them as valid unsupported theory.
+
 ## Typed domain model
 
 The shared compiler in `packages/covenant-core` uses these typed nodes and records:

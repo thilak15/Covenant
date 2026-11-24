@@ -13,7 +13,7 @@ COVENANT is a neuro-symbolic **Contradiction & Loophole Exorcist** skeleton. It 
 
 ## Shared Skeleton Foundation
 
-`packages/covenant-core` is the lean shared Skeleton Foundation, published to the workspaces as `@covenant/core`, with a target of fewer than 1,200 lines of code.
+`packages/covenant-core` is the lean shared Skeleton Foundation, published to the workspaces as `@covenant/core`. Its architecture keeps core engine logic separate from the shared Tribunal UI, favors focused modules with clear ownership, and never truncates required behavior to meet an artificial line count.
 
 ### Shared domain model and compiler
 

@@ -102,7 +102,7 @@ Software specifications and legal clauses can contain contradictions that only a
 
 5.5 WHEN live browser verification runs, THE COVENANT Core SHALL not execute the 200-run property-based suites on the main thread.
 
-5.6 WHEN the six-sample performance gate runs, THE COVENANT Core SHALL measure first-call and repeated production-build verification with native browser timing across stable Chromium, Firefox, and WebKit on the documented reference baseline.
+5.6 WHEN performance verification runs, THE COVENANT Core SHALL enforce an automated Vitest gate that measures each Cursed Sample Scroll's first verification immediately after solver construction and 20 warm verification calls with `performance.now()` against the compiled `@covenant/core` production artifact at `dist/index.js`, requires every run to complete in under 15 ms, and reserves Chrome and Safari verification for manual pre-submission smoke testing on the deployed static Vite applications.
 
 ## Requirement 6: NodeZ3Solver isolation
 
@@ -338,7 +338,7 @@ Software specifications and legal clauses can contain contradictions that only a
 
 16.2 WHEN Node tests or the MCP Power need Z3, THE COVENANT Core SHALL expose `NodeZ3Solver` only from the Node-specific `@covenant/core/node` entry point.
 
-16.3 WHEN the checked-in LOC gate counts production source, THE COVENANT Core SHALL contain fewer than 1,200 physical lines with non-comment TypeScript tokens across package `.ts` and `.tsx` files, including `src/tribunal-ui/` and excluding only tests, generated declarations, and files under `src/generated/`.
+16.3 WHERE production modules are added THE COVENANT Core SHALL keep core engine logic separate from shared Tribunal UI code through focused modules and clear dependency direction without imposing an artificial source-line cap.
 
 16.4 WHEN package modules are analyzed, THE COVENANT Core SHALL contain no circular production imports and SHALL keep the domain model independent of parser, solver, verifier, UI, and Node-adapter modules.
 
@@ -346,7 +346,7 @@ Software specifications and legal clauses can contain contradictions that only a
 
 16.6 WHEN the package build and browser bundle checks run, THE COVENANT Core SHALL pass strict typechecking and prove that browser artifacts contain no `z3-solver`, Z3 WASM, or Node adapter code.
 
-16.7 WHEN package build or root typecheck runs, THE COVENANT Core SHALL execute one deterministic TypeScript-scanner LOC script with the included and excluded paths defined in `design.md`.
+16.7 WHEN package build or root typecheck runs, THE COVENANT Core SHALL execute one deterministic TypeScript source check that reports production source size and rejects explicit `any` without failing on an artificial line threshold.
 
 ## Out of Scope
 

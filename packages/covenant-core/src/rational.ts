@@ -47,6 +47,33 @@ export function compareRationals(a: CanonicalRational, b: CanonicalRational): -1
   return delta < 0n ? -1 : delta > 0n ? 1 : 0;
 }
 
+export function addRationals(a: CanonicalRational, b: CanonicalRational): CanonicalRational {
+  return makeRational(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
+}
+
+export function subtractRationals(a: CanonicalRational, b: CanonicalRational): CanonicalRational {
+  return makeRational(a.numerator * b.denominator - b.numerator * a.denominator, a.denominator * b.denominator);
+}
+
+export function divideRational(value: CanonicalRational, divisor: bigint): CanonicalRational {
+  if (divisor === 0n) throw new RangeError("Rational divisor must be nonzero");
+  return makeRational(value.numerator, value.denominator * divisor);
+}
+
+export function floorRational(value: CanonicalRational): bigint {
+  const quotient = value.numerator / value.denominator;
+  return value.numerator < 0n && value.numerator % value.denominator !== 0n ? quotient - 1n : quotient;
+}
+
+export function ceilRational(value: CanonicalRational): bigint {
+  const quotient = value.numerator / value.denominator;
+  return value.numerator > 0n && value.numerator % value.denominator !== 0n ? quotient + 1n : quotient;
+}
+
+export function absoluteRational(value: CanonicalRational): CanonicalRational {
+  return value.numerator < 0n ? { numerator: -value.numerator, denominator: value.denominator } : value;
+}
+
 export function serializeRational(value: CanonicalRational): SerializedRational {
   return { numerator: value.numerator.toString(10), denominator: value.denominator.toString(10) };
 }

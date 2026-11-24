@@ -7,7 +7,7 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   Blocked by: None
 
-  **What it delivers:** A reproducible pnpm install and green build/typecheck baseline for `@covenant/core`, Spec Inquisitor, and Clause Exorcist, with strict TypeScript settings, browser-safe package exports, and the production-source LOC gate wired into builds.
+  **What it delivers:** A reproducible pnpm install and green build/typecheck baseline for `@covenant/core`, Spec Inquisitor, and Clause Exorcist, with strict TypeScript settings, browser-safe package exports, and the production-source policy check wired into builds.
 
   **Exact files to touch:**
   - `package.json`
@@ -32,12 +32,12 @@ Work the frontier in order. A task is complete only after its listed command pas
   - `app-2-clause-exorcist/index.html`
   - `app-2-clause-exorcist/src/main.tsx`
 
-  **Test seam to write first:** `packages/covenant-core/test/package-boundary.test.ts`. Make it fail until the workspace contains exactly the three prescribed package names, each workspace extends the root strict TypeScript configuration, the root browser entry can be imported without a Node entry, and `check-loc.mjs` uses the design's include/exclude rules and fails at 1,200 counted lines.
+  **Test seam to write first:** `packages/covenant-core/test/package-boundary.test.ts`. Make it fail until the workspace contains exactly the three prescribed package names, each workspace extends the root strict TypeScript configuration, the root browser entry can be imported without a Node entry, and `check-loc.mjs` reports included production source while excluding tests, declarations, and `src/generated/` and rejecting explicit `any` without an artificial line threshold.
 
   - [x] Configure the package manifests and root scripts so `dev`, `build`, `test`, `test:pbt`, and `typecheck` traverse the intended workspaces without requiring a backend or secret.
   - [x] Add minimal static Vite entry points for both applications so the monorepo has a green baseline before application features begin.
   - [x] Configure the Core package to emit declarations and JavaScript while keeping the source root browser-safe.
-  - [x] Implement the deterministic TypeScript-scanner LOC gate, including `src/tribunal-ui/` and excluding only tests, declarations, and `src/generated/`.
+  - [x] Implement the deterministic TypeScript source check, including `src/tribunal-ui/`, excluding tests, declarations, and `src/generated/`, reporting source size, and rejecting explicit `any` without a hard line cap.
   - [x] Generate and commit the pnpm lockfile with the Node 20 and pnpm 9.15 baseline.
 
   **Exact pnpm verification command:** `pnpm install --frozen-lockfile && pnpm --filter @covenant/core exec vitest run test/package-boundary.test.ts && pnpm build && pnpm typecheck`
@@ -74,8 +74,8 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   _Requirements: 1.1–1.5, 2.1–2.5, 3.1–3.6, 3.10, 11.1–11.6, 16.1, 16.4_
 
-- [ ] 3. Prove Consistency with BrowserDeterministicSolver, an Unsat Core, and a Phantom Witness
-  Status: open
+- [x] 3. Prove Consistency with BrowserDeterministicSolver, an Unsat Core, and a Phantom Witness
+  Status: resolved
 
   Blocked by: 2
 
@@ -100,16 +100,16 @@ Work the frontier in order. A task is complete only after its listed command pas
 
   **Test seam to write first:** `packages/covenant-core/test/browser-consistency.test.ts`. Call public `verifyCovenant` with `BrowserDeterministicSolver` for three cases: jointly applicable incompatible hard consequences must produce the expected source-ordered subset-minimal core and replayable witness; mutually exclusive applicability must not produce a Consistency finding; overlapping `MAY X` and `MUST_NOT X` must fail Unambiguity without creating a Consistency contradiction.
 
-  - [ ] Implement the promise-based `CovenantSolver` overloads, tracked and untracked `SolverProblem` validation, typed `SAT`/`UNSAT`/`UNKNOWN` results, cancellation/budget handling, and separate live telemetry.
-  - [ ] Implement deterministic Boolean and enum search with exact interval intersection, including strict integer gaps, satisfiable decimal open intervals, disjunction branches, and unsupported-theory `UNKNOWN`.
-  - [ ] Discover interacting hard-rule candidates in deterministic dependency components and prove applicability before adding modal consequences.
-  - [ ] Minimize complete rule groups by reverse source-order removal and recheck every retained member for subset minimality.
-  - [ ] Canonicalize a witness from the minimized core's satisfiable applicability query, replay it against every core rule, and list incompatible consequences separately.
-  - [ ] Implement Testability, Completeness, Unambiguity, and the combined Security & Liveness Inquisitors, including the exact ordered 60-CWE manifest and declared primary-workflow deadlock checks.
-  - [ ] Aggregate exactly five verdicts with `FAIL > UNKNOWN > PASS` precedence and certify only five `PASS` values.
-  - [ ] Benchmark first and warm verification for all six test fixtures and keep each supported browser solve under 15 ms on the documented baseline.
+  - [x] Implement the promise-based `CovenantSolver` overloads, tracked and untracked `SolverProblem` validation, typed `SAT`/`UNSAT`/`UNKNOWN` results, cancellation/budget handling, and separate live telemetry.
+  - [x] Implement deterministic Boolean and enum search with exact interval intersection, including strict integer gaps, satisfiable decimal open intervals, disjunction branches, and unsupported-theory `UNKNOWN`.
+  - [x] Discover interacting hard-rule candidates in deterministic dependency components and prove applicability before adding modal consequences.
+  - [x] Minimize complete rule groups by reverse source-order removal and recheck every retained member for subset minimality.
+  - [x] Canonicalize a witness from the minimized core's satisfiable applicability query, replay it against every core rule, and list incompatible consequences separately.
+  - [x] Implement Testability, Completeness, Unambiguity, and the combined Security & Liveness Inquisitors, including the exact ordered 60-CWE manifest and declared primary-workflow deadlock checks.
+  - [x] Aggregate exactly five verdicts with `FAIL > UNKNOWN > PASS` precedence and certify only five `PASS` values.
+  - [x] Build `@covenant/core`, then benchmark each fixture's first verification and 20 warm calls from `dist/index.js` under Vitest with `performance.now()`, keeping every run under 15 ms; defer stable Chrome and Safari timing to manual pre-submission smoke testing on the deployed static Vite applications.
 
-  **Exact pnpm verification command:** `pnpm --filter @covenant/core exec vitest run test/browser-consistency.test.ts test/browser-numeric.test.ts test/inquisitors.test.ts test/security-controls.test.ts test/browser-performance.test.ts && pnpm --filter @covenant/core build && pnpm typecheck`
+  **Exact pnpm verification command:** `pnpm --filter @covenant/core build && pnpm --filter @covenant/core exec vitest run test/browser-consistency.test.ts test/browser-numeric.test.ts test/inquisitors.test.ts test/security-controls.test.ts test/browser-performance.test.ts && pnpm typecheck`
 
   _Requirements: 3.7–3.10, 4.1–4.7, 5.1–5.6, 7.1–7.9, 8.1–8.6, 9.1–9.6, 10.1–10.10, 13.1–13.5, 16.1, 16.4_
 

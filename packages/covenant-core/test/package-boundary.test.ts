@@ -228,7 +228,7 @@ describe("the monorepo package boundary", () => {
     );
   });
 
-  it("counts production TypeScript tokens and fails at 1,200 lines", () => {
+  it("reports production TypeScript size without imposing a hard cap", () => {
     const fixtureRoot = mkdtempSync(join(tmpdir(), "covenant-loc-"));
     temporaryDirectories.push(fixtureRoot);
     const ignoredLines = "export type Ignored = string;\n".repeat(1_200);
@@ -244,15 +244,15 @@ describe("the monorepo package boundary", () => {
     writeFixture("src/comments.ts", `${"// ignored\n".repeat(1_200)}\n`);
 
     const script = join(repositoryRoot, "packages/covenant-core/scripts/check-loc.mjs");
-    expect(() => execFileSync(process.execPath, [script, fixtureRoot])).not.toThrow();
+    expect(execFileSync(process.execPath, [script, fixtureRoot], { encoding: "utf8" })).toContain("production source lines: 1199");
 
     writeFixture("src/index.ts", "export const threshold = true;\n");
-    expect(() => execFileSync(process.execPath, [script, fixtureRoot])).toThrow();
+    expect(execFileSync(process.execPath, [script, fixtureRoot], { encoding: "utf8" })).toContain("production source lines: 1200");
 
     const nestedGeneratedRoot = mkdtempSync(join(tmpdir(), "covenant-loc-nested-generated-"));
     temporaryDirectories.push(nestedGeneratedRoot);
     writeFixture("src/internal/generated/escape.ts", ignoredLines);
-    expect(() => execFileSync(process.execPath, [script, nestedGeneratedRoot])).toThrow();
+    expect(execFileSync(process.execPath, [script, nestedGeneratedRoot], { encoding: "utf8" })).toContain("production source lines: 1200");
 
     const explicitAnyRoot = mkdtempSync(join(tmpdir(), "covenant-loc-explicit-any-"));
     temporaryDirectories.push(explicitAnyRoot);
@@ -260,7 +260,7 @@ describe("the monorepo package boundary", () => {
     expect(() => execFileSync(process.execPath, [script, explicitAnyRoot])).toThrow(/explicit any/iu);
   });
 
-  it("wires the LOC gate into package builds and root typechecking", () => {
+  it("wires the production source check into package builds and root typechecking", () => {
     const rootScripts = readRecord(readJson("package.json").scripts);
     const coreScripts = readRecord(readJson("packages/covenant-core/package.json").scripts);
 

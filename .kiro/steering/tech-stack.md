@@ -21,7 +21,7 @@ Use `unknown` plus explicit narrowing instead of `any`. TypeScript's compiler pr
 
 | Workspace | Responsibility |
 | --- | --- |
-| `packages/covenant-core` | Lean shared Skeleton Foundation, consumed as `@covenant/core`, with a target below 1,200 LOC |
+| `packages/covenant-core` | Lean shared Skeleton Foundation, consumed as `@covenant/core`, with focused engine and Tribunal UI modules separated by clear dependency boundaries |
 | `app-1-spec-inquisitor` | Separate root application for software specifications, RBAC, 60-CWE security, and sandbox liveness auditing |
 | `app-2-clause-exorcist` | Separate root application for SaaS contracts, SLAs, and legal loophole auditing |
 

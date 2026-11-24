@@ -1,14 +1,16 @@
 import type {
   CompiledRule,
   Condition,
+  NormalizedAtom,
   NormalizedCondition,
   NumericBound,
   Rule,
   RuleScope,
   ScopeFacet,
+  VariableAssignment,
   VariableDeclaration,
 } from "./model.js";
-import { isCanonicalRational } from "./rational.js";
+import { compareRationals, isCanonicalRational, stringifyCovenant } from "./rational.js";
 
 const TRUE: NormalizedCondition = { kind: "TRUE" };
 const FALSE: NormalizedCondition = { kind: "FALSE" };
@@ -94,6 +96,78 @@ export function compileRule(rule: Rule): CompiledRule {
     permission: modality === "MAY" ? consequence : null,
     triggeredConsequence: { ruleId: rule.id, modality, consequence: rule.consequence },
   };
+}
+
+export function negateNormalizedCondition(condition: NormalizedCondition): NormalizedCondition {
+  switch (condition.kind) {
+    case "TRUE": return FALSE;
+    case "FALSE": return TRUE;
+    case "ATOM": {
+      const atom = condition.atom;
+      if (atom.kind === "BOOLEAN") return { kind: "ATOM", atom: { ...atom, equals: !atom.equals } };
+      if (atom.kind === "ENUM") return { kind: "ATOM", atom: { ...atom, operator: atom.operator === "EQ" ? "NEQ" : "EQ" } };
+      return normalizeBound(atom.bound, true);
+    }
+    case "ALL": return combine("ANY", condition.conditions.map(negateNormalizedCondition));
+    case "ANY": return combine("ALL", condition.conditions.map(negateNormalizedCondition));
+  }
+}
+
+export function conditionVariables(condition: NormalizedCondition): readonly string[] {
+  const found = new Set<string>();
+  const visit = (node: NormalizedCondition): void => {
+    if (node.kind === "ATOM") found.add(node.atom.kind === "NUMERIC" ? node.atom.bound.variable : node.atom.variable);
+    else if (node.kind === "ALL" || node.kind === "ANY") node.conditions.forEach(visit);
+  };
+  visit(condition);
+  return [...found];
+}
+
+/** Canonicalizes commutative normalized conditions for semantic comparison. */
+export function normalizedConditionKey(condition: NormalizedCondition): string {
+  if (condition.kind === "TRUE" || condition.kind === "FALSE") return condition.kind;
+  if (condition.kind === "ATOM") return `ATOM:${stringifyCovenant(condition.atom)}`;
+  const children = [...new Set(condition.conditions.map(normalizedConditionKey))].sort();
+  return `${condition.kind}:[${children.join(",")}]`;
+}
+
+function atomValue(atom: NormalizedAtom, assignments: ReadonlyMap<string, VariableAssignment["value"]>): boolean {
+  const assigned = assignments.get(atom.kind === "NUMERIC" ? atom.bound.variable : atom.variable);
+  if (assigned === undefined) return false;
+  if (atom.kind === "BOOLEAN") return assigned.kind === "BOOLEAN" && assigned.value === atom.equals;
+  if (atom.kind === "ENUM") {
+    return assigned.kind === "ENUM" && (assigned.value === atom.value) === (atom.operator === "EQ");
+  }
+  if (assigned.kind !== atom.bound.domain) return false;
+  const value = assigned.kind === "INTEGER" ? { numerator: assigned.value, denominator: 1n } : assigned.value;
+  const { lower, upper } = atom.bound;
+  if (lower !== undefined) {
+    const comparison = compareRationals(value, lower.value);
+    if (comparison < 0 || (comparison === 0 && !lower.inclusive)) return false;
+  }
+  if (upper !== undefined) {
+    const comparison = compareRationals(value, upper.value);
+    if (comparison > 0 || (comparison === 0 && !upper.inclusive)) return false;
+  }
+  return true;
+}
+
+export function evaluateNormalizedCondition(condition: NormalizedCondition, table: readonly VariableAssignment[]): boolean {
+  const assignments = new Map(table.map((entry) => [entry.variable, entry.value]));
+  const evaluate = (node: NormalizedCondition): boolean => {
+    switch (node.kind) {
+      case "TRUE": return true;
+      case "FALSE": return false;
+      case "ATOM": return atomValue(node.atom, assignments);
+      case "ALL": return node.conditions.every(evaluate);
+      case "ANY": return node.conditions.some(evaluate);
+    }
+  };
+  return evaluate(condition);
+}
+
+export function evaluateCondition(condition: Condition, table: readonly VariableAssignment[]): boolean {
+  return evaluateNormalizedCondition(normalizeCondition(condition), table);
 }
 
 /** Returns the first diagnostic code for an invalid external condition, or `null` when valid. */

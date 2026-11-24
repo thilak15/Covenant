@@ -170,6 +170,11 @@ export interface VerificationTelemetry {
   readonly clausesChecked: number;
 }
 export type SolverUnknownReason = "UNSUPPORTED_THEORY" | "TIMEOUT" | "RESOURCE_LIMIT" | "CANCELLED";
+export interface SolveOptions {
+  readonly timeoutMs?: number;
+  readonly maxSteps?: number;
+  readonly signal?: AbortSignal;
+}
 export interface SolverSat { readonly status: "SAT"; readonly model: AssignmentTable; readonly telemetry: VerificationTelemetry }
 export interface SolverUnknown { readonly status: "UNKNOWN"; readonly reason: SolverUnknownReason; readonly telemetry: VerificationTelemetry }
 export interface TrackedSolverUnsat { readonly status: "UNSAT"; readonly core: UnsatCore; readonly telemetry: VerificationTelemetry }
@@ -178,6 +183,13 @@ export type SolverResult<T extends CoreTracking = CoreTracking> =
   | SolverSat
   | SolverUnknown
   | (T extends "RULES" ? TrackedSolverUnsat : UntrackedSolverUnsat);
+export type AnySolverResult = SolverSat | SolverUnknown | TrackedSolverUnsat | UntrackedSolverUnsat;
+export interface CovenantSolver {
+  solve(problem: UnsupportedSolverProblem, options?: SolveOptions): Promise<SolverUnknown>;
+  solve(problem: SolverProblem<"RULES">, options?: SolveOptions): Promise<SolverResult<"RULES">>;
+  solve(problem: SolverProblem<"NONE">, options?: SolveOptions): Promise<SolverResult<"NONE">>;
+  solve(problem: CovenantProblem, options?: SolveOptions): Promise<AnySolverResult>;
+}
 export interface RepairCore { readonly id: string; readonly findingId: FindingId; readonly ruleIds: NonEmpty<RuleId> }
 export interface SourceEdit {
   readonly ruleId: RuleId;
@@ -297,4 +309,12 @@ export interface OpenPBTStats<P extends PBTProperty = PBTProperty> {
   readonly discardedRuns: number;
   readonly seed: number;
   readonly durationMs: number;
+}
+export interface CweControl {
+  readonly id: CweControlId;
+  readonly title: string;
+  readonly appliesWhen: Condition;
+  readonly requiredObligation: Condition;
+  readonly evidenceMessage: string;
+  readonly repairStrategyIds: readonly [string, string];
 }

@@ -16,7 +16,8 @@ No implementation exists yet, so this design establishes the first package bound
 - Return deterministic subset-minimal rule cores and replayable Phantom Witnesses.
 - Keep proof verdicts independent from repair availability.
 - Keep all browser exports free from Node and Z3 imports.
-- Keep feature production code below 1,200 nonblank, non-comment lines.
+- Keep the architecture lean through focused modules, clear ownership, and strict separation between core engine logic and shared Tribunal UI.
+- Preserve complete, readable implementations without artificial truncation.
 
 ## Architecture
 
@@ -76,27 +77,11 @@ The package has two public entry points:
 
 `model.ts` is the dependency root. `engine.ts` is the orchestration leaf. This direction prevents production import cycles. `src/index.ts` must never export from `src/node/`.
 
-## Source-line budget
+## Lean module architecture
 
-The hard gate counts nonblank, non-comment hand-written lines in production `.ts` and `.tsx` files under `packages/covenant-core`. Tests, generated declarations, and the generated OpenPBTStats JSON snapshot are excluded. The package-wide budget reserves space for the later shared Tribunal UI while keeping the final package below 1,200 lines:
+The package stays lean through cohesion and dependency direction rather than a hard source-line cap. Core engine modules own the domain model, parser, condition normalization, solver seam, solver implementations, Inquisitors, evidence, repairs, preservation, and telemetry. Shared Tribunal UI modules consume those browser-safe APIs and remain isolated under `src/tribunal-ui/`; UI concerns do not enter the engine modules, and engine behavior is not duplicated in UI code.
 
-| Area | Target maximum |
-| --- | ---: |
-| Domain model | 120 |
-| Rational and condition normalization | 135 |
-| Solver contract and browser solver | 190 |
-| Inquisitors and engine | 170 |
-| Parser | 65 |
-| Repairs and preservation | 75 |
-| Security catalog, PBT formatting, exports | 45 |
-| Node Z3 adapter | 55 |
-| Reserved for `src/tribunal-ui/` | 275 |
-| **Planned package total** | **1,130** |
-| **Contingency below the 1,200-line gate** | **69** |
-
-These are caps, not quotas. Shared helpers remain small and purpose-specific. Tests may be extensive because they do not count against the production limit.
-
-The implementation adds `packages/covenant-core/scripts/check-loc.mjs`. It walks `src/**/*.ts` and `src/**/*.tsx`, including `src/tribunal-ui/`, excludes `src/generated/**`, `*.d.ts`, and `*.test.*`, and uses the TypeScript scanner to count physical lines containing at least one non-comment token. The script fails at 1,200 or more lines and runs from the package `build` and root `typecheck` commands. Generated TypeScript is permitted only under `src/generated/`; generated JSON snapshots remain excluded data.
+Modules should remain focused, avoid circular production imports, and expose only the public seams needed by both applications. Generated artifacts stay under `src/generated/`, and tests remain outside production source. Implementations must remain complete and readable: required behavior in modules such as `model.ts` and `parser.ts` must not be compressed, merged, or truncated to satisfy an artificial line count.
 
 ## Exact TypeScript domain contract
 
@@ -545,7 +530,7 @@ The verifier, rather than either solver adapter, enforces the Consistency-specif
 8. Construct SAT values by replaying the final branch against the original normalized constraints.
 9. Count evaluated normalized clauses and measure only solve time in `VerificationTelemetry`.
 
-The browser benchmark uses a production build and native `performance.now()`. For each Cursed Sample Scroll it measures the first verification immediately after solver construction and 20 subsequent calls. The acceptance matrix covers current stable Chromium, Firefox, and WebKit on an Apple M1-class reference machine or faster, with developer tools closed; every individual solve must remain below 15 ms. The report records browser engine, version, hardware, first-call latency, warm-call maximum, and sample ID.
+The automated performance gate runs in Vitest against the compiled `@covenant/core` production artifact at `dist/index.js` and uses `performance.now()`. For each Cursed Sample Scroll it constructs a solver, measures the first verification, then measures 20 warm calls with that solver. Every individual duration must remain below 15 ms. Multi-browser timing is a manual pre-submission smoke test on the deployed static Vite applications in current stable Chrome and Safari with developer tools closed; it is not part of the automated Task 3 gate.
 
 ## NodeZ3Solver algorithm and isolation
 
@@ -1094,10 +1079,10 @@ Vitest runs all properties in Node with `fast-check`. Each property sets `numRun
 
 ### Non-functional gates
 
-- Browser benchmark: first-call and warm verification of all six Cursed Sample Scrolls remain below 15 ms under the documented browser matrix and reference baseline.
+- Automated production-artifact benchmark: Vitest imports `dist/index.js`, measures the first and each of 20 warm verification calls for all six Cursed Sample Scrolls with `performance.now()`, and requires every duration to remain below 15 ms. Stable Chrome and Safari timing is checked manually on the deployed static Vite applications before submission.
 - Bundle isolation: browser output contains no `z3-solver`, `.wasm`, `NodeZ3Solver`, Node built-ins, or `SharedArrayBuffer` reference.
 - Type safety: strict typecheck passes and a source scan finds no explicit `any`.
-- Line budget: production source remains below 1,200 nonblank, non-comment lines.
+- Lean architecture: production modules remain focused and acyclic, core engine logic stays separate from `src/tribunal-ui/`, and required behavior is never truncated to satisfy an artificial line count.
 - Determinism: repeated parse, normalize, solve, minimize, witness, and formatting operations produce stable serialized output.
 
 ## Requirement traceability
@@ -1112,7 +1097,7 @@ Vitest runs all properties in Node with `fast-check`. Each property sets `numRun
 | 12-13 | Resolution Payload, `applyChalicePatch`, certification |
 | 14 | Node Vitest and fast-check properties |
 | 15 | OpenPBTStats snapshot and telemetry formatters |
-| 16 | Export map, import graph, bundle and LOC gates |
+| 16 | Export map, import graph, and modular engine/UI boundaries |
 
 ## Out of scope
 

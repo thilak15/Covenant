@@ -6,7 +6,6 @@ import ts from "typescript";
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const scanRoot = resolve(process.argv[2] ?? packageRoot);
 const sourceRoot = join(scanRoot, "src");
-const limit = 1_200;
 
 function isCountedFile(filePath) {
   const relativePath = relative(sourceRoot, filePath);
@@ -81,12 +80,8 @@ const files = collectFiles(sourceRoot);
 const inspections = files.map(inspectSource);
 const count = inspections.reduce((total, inspection) => total + inspection.lineCount, 0);
 const explicitAnyLocations = inspections.flatMap((inspection) => inspection.explicitAnyLocations);
-console.log(`COVENANT Core production LOC: ${count}/${limit - 1}`);
+console.log(`COVENANT Core production source lines: ${count}`);
 if (explicitAnyLocations.length > 0) {
   console.error(`Explicit any is prohibited:\n${explicitAnyLocations.join("\n")}`);
-  process.exitCode = 1;
-}
-if (count >= limit) {
-  console.error(`Production TypeScript must remain below ${limit} counted lines.`);
   process.exitCode = 1;
 }

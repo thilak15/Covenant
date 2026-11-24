@@ -304,7 +304,7 @@ Formal-verification output is difficult to trust when the interface reduces it t
 
 16.6 WHEN bundle inspection runs THE SYSTEM SHALL fail if a production asset contains `z3-solver`, `NodeZ3Solver`, `.wasm`, a remote Google Fonts URL, or a required backend endpoint.
 
-16.7 WHEN the final package LOC gate runs THE SYSTEM SHALL keep all production source under `packages/covenant-core`, including `src/tribunal-ui/`, below the limit established by the Core design.
+16.7 WHEN production modules are added under `packages/covenant-core`, including `src/tribunal-ui/`, THE SYSTEM SHALL keep Tribunal UI code separate from core engine logic through focused modules and clear dependency direction without imposing an artificial source-line cap.
 
 ## Out of Scope
 
