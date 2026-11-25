@@ -1,0 +1,51 @@
+{
+  "name": "covenant-crew",
+  "description": "Three-agent pipeline that formalizes specs and legal clauses, proves contradictions and security gaps with Z3, then presents verified repairs and exports patched specs, property tests or redlines.",
+  "version": "1.0.0",
+  "watch": {
+    "paths": [".kiro/specs/**/requirements.md"],
+    "events": ["create", "change"]
+  },
+  "tools": {
+    "mcpServers": {
+      "z3-covenant-power": {
+        "command": "node",
+        "args": ["./powers/z3-covenant-power/server.mjs"],
+        "env": {}
+      }
+    }
+  },
+  "context": [
+    ".kiro/steering/GLOSSARY.md",
+    ".kiro/steering/smt-formalization.md"
+  ],
+  "pipeline": [
+    {
+      "id": "formalizer",
+      "name": "Formalizer",
+      "prompt": ".kiro/crew/agents/01-formalizer.md",
+      "tools": ["read", "write"],
+      "input": "A changed requirements.md, or pasted legal clauses.",
+      "output": "ParseRequest JSON with a typed deontic AST summary.",
+      "next": "z3-inquisitor"
+    },
+    {
+      "id": "z3-inquisitor",
+      "name": "Z3 Inquisitor",
+      "prompt": ".kiro/crew/agents/02-z3-inquisitor.md",
+      "tools": ["mcp:z3-covenant-power/verify_covenant_z3", "mcp:z3-covenant-power/audit_cwe_controls"],
+      "input": "ParseRequest from the Formalizer.",
+      "output": "Five verdicts, Unsat Cores, Phantom Witnesses, CWE gaps and Resolution Payloads.",
+      "next": "redline-pbt-synthesizer"
+    },
+    {
+      "id": "redline-pbt-synthesizer",
+      "name": "Redline & PBT Synthesizer",
+      "prompt": ".kiro/crew/agents/03-redline-pbt-synthesizer.md",
+      "tools": ["read", "write", "mcp:z3-covenant-power/apply_chalice_patch_z3"],
+      "input": "Z3 Inquisitor report and the user's Chalice choice.",
+      "output": "Patched EARS requirements.md plus a fast-check test, or a Legal Redline diff plus a negotiation summary.",
+      "next": null
+    }
+  ]
+}

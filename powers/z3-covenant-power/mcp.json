@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "z3-covenant-power": {
+      "command": "node",
+      "args": ["./powers/z3-covenant-power/server.mjs"],
+      "env": {},
+      "disabled": false
+    }
+  }
+}
