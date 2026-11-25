@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Verify COVENANT core on save",
+      "trigger": "PostFileSave",
+      "description": "When a file under packages/covenant-core/src/ is saved, run the @covenant/core test suite and then the cross-workspace typecheck.",
+      "matcher": "packages/covenant-core/src/.*",
+      "action": {
+        "type": "command",
+        "command": "pnpm --filter @covenant/core test && pnpm typecheck",
+        "timeout": 600
+      }
+    }
+  ]
+}

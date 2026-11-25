@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "EARS spec audit on save",
+      "trigger": "PostFileSave",
+      "description": "When a spec requirements.md under .kiro/specs/ is saved, audit its EARS syntax and look for contradictions between requirements.",
+      "matcher": "\\.kiro/specs/.*/requirements\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "A COVENANT spec requirements.md was just saved. Audit that file now, using the vocabulary in .kiro/steering/GLOSSARY.md.\n\n1. EARS syntax: every acceptance criterion must follow one strict EARS form: `WHEN <trigger> THE <system> SHALL <response>`, `IF <condition> THEN THE <system> SHALL <response>`, `WHILE <state> THE <system> SHALL <response>`, `WHERE <feature> THE <system> SHALL <response>`, or the unconditional `THE <system> SHALL <response>`. Flag any criterion that is missing its trigger keyword or SHALL, uses should/will/must instead of SHALL, names no system, or packs several independent responses into one criterion. Also confirm each requirement has a user story and numbered acceptance criteria.\n2. Contradictions: compare criteria within the file, and against the other requirements.md files under .kiro/specs/. Report any pair or small set of criteria that can apply in the same situation (same trigger, state, or scope) but demand incompatible responses, for example SHALL and SHALL NOT on the same behavior, or different numeric limits for the same quantity. Cite the criterion numbers involved and give the concrete overlapping situation. Do not report criteria whose triggers are mutually exclusive.\n\nReport findings as a short list with criterion numbers and a proposed rewrite for each. If the file is clean, say so in one sentence. Do not edit the file unless the user asks."
+      }
+    }
+  ]
+}

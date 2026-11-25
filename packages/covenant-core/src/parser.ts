@@ -1,5 +1,6 @@
 import { asRecord, validateCondition, validateEndpoints } from "./condition.js";
 import type {
+  CanonicalRational,
   Condition,
   CovenantDocument,
   DeonticModality,
@@ -17,7 +18,7 @@ import type {
   UnsupportedTheory,
   VariableDeclaration,
 } from "./model.js";
-import { parseRational } from "./rational.js";
+import { compareRationals, parseRational } from "./rational.js";
 
 type Variables = ReadonlyMap<string, VariableDeclaration>;
 const MODALITIES: readonly unknown[] = ["MUST", "MUST_NOT", "MAY"];
@@ -173,31 +174,41 @@ function parseClause(source: SourceDocument, variables: Variables, line: string,
   }
 }
 
-function variableCodes(raw: unknown): string[] {
+interface VariableFailure { readonly code: string; readonly message: string }
+const failure = (code: string, message = `Invalid variable declaration (${code})`): VariableFailure => ({ code, message });
+/** A declared range is inverted when lower > upper, or both endpoints are equal and either is exclusive. */
+function isInvertedRange(range: Record<string, unknown>): boolean {
+  const lower = asRecord(range["lower"]);
+  const upper = asRecord(range["upper"]);
+  if (lower === null || upper === null) return false;
+  const order = compareRationals(lower["value"] as CanonicalRational, upper["value"] as CanonicalRational);
+  return order > 0 || (order === 0 && (lower["inclusive"] !== true || upper["inclusive"] !== true));
+}
+function variableFailures(raw: unknown): VariableFailure[] {
   const names = new Set<string>();
-  const codes: string[] = [];
+  const failures: VariableFailure[] = [];
   for (const item of Array.isArray(raw) ? raw : []) {
     const variable = asRecord(item);
     const name = variable?.["name"];
     if (variable === null || typeof name !== "string" || name === "" || RESERVED.includes(name)) {
-      codes.push("INVALID_VARIABLE");
+      failures.push(failure("INVALID_VARIABLE"));
       continue;
     }
-    if (names.has(name)) codes.push("DUPLICATE_VARIABLE");
+    if (names.has(name)) failures.push(failure("DUPLICATE_VARIABLE"));
     names.add(name);
     const { kind, values, domain } = variable;
     if (kind === "ENUM") {
-      if (!Array.isArray(values) || values.some((value) => typeof value !== "string")) codes.push("INVALID_VARIABLE");
-      else if (values.length === 0) codes.push("EMPTY_ENUM_DOMAIN");
-      else if (new Set(values).size !== values.length) codes.push("INVALID_VARIABLE");
+      if (!Array.isArray(values) || values.some((value) => typeof value !== "string")) failures.push(failure("INVALID_VARIABLE"));
+      else if (values.length === 0) failures.push(failure("EMPTY_ENUM_DOMAIN"));
+      else if (new Set(values).size !== values.length) failures.push(failure("INVALID_VARIABLE"));
     } else if (kind === "NUMERIC") {
       const range = asRecord(variable["range"] ?? {});
-      if ((domain !== "INTEGER" && domain !== "DECIMAL") || range === null || validateEndpoints(range) !== null) codes.push("INVALID_VARIABLE");
-    } else if (kind !== "BOOLEAN") codes.push("INVALID_VARIABLE");
+      if ((domain !== "INTEGER" && domain !== "DECIMAL") || range === null || validateEndpoints(range) !== null) failures.push(failure("INVALID_VARIABLE"));
+      else if (isInvertedRange(range)) failures.push(failure("INVERTED_NUMERIC_RANGE", `Numeric variable "${name}" declares an inverted range: no value satisfies its lower and upper endpoints`));
+    } else if (kind !== "BOOLEAN") failures.push(failure("INVALID_VARIABLE"));
   }
-  return codes;
+  return failures;
 }
-
 function asLocation(value: unknown, length: number, documentId: string): SourceLocation | null {
   const location = asRecord(value);
   const start = asRecord(location?.["start"]);
@@ -228,7 +239,7 @@ export function validateCovenantDocument(input: unknown): DocumentValidationResu
     return failures === null ? { status: "VALID", document: input as CovenantDocument, diagnostics: [] } : { status: "INVALID", diagnostics: failures };
   };
   const declared = document["variables"] as unknown[];
-  for (const code of variableCodes(declared)) add(code, `Invalid variable declaration (${code})`);
+  for (const { code, message } of variableFailures(declared)) add(code, message);
   if (diagnostics.length > 0) return finish();
   const variables: Variables = new Map(declared.map((item) => [(item as VariableDeclaration).name, item as VariableDeclaration]));
   const check = (condition: unknown, label: string, location: SourceLocation | null): void => {
@@ -303,8 +314,8 @@ export function parseOffline(input: unknown): ParseResult {
     return rejected(null, [diagnostic("INVALID_INPUT", "Expected { source, declaredVariables, primaryWorkflows }")]);
   }
   const document: SourceDocument = { id, revision, format, text };
-  const codes = variableCodes(request["declaredVariables"]);
-  if (codes.length > 0) return rejected(document, codes.map((code) => diagnostic(code, `Invalid variable declaration (${code})`)));
+  const declarationFailures = variableFailures(request["declaredVariables"]);
+  if (declarationFailures.length > 0) return rejected(document, declarationFailures.map(({ code, message }) => diagnostic(code, message)));
   const declared = request["declaredVariables"] as readonly VariableDeclaration[];
   const variables: Variables = new Map(declared.map((variable) => [variable.name, variable]));
   const rules: Rule[] = [];
